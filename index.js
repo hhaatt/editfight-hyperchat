@@ -2,6 +2,7 @@
 
 const { Party } = require('./lib/party')
 const { Server } = require('./lib/server')
+const uuid = require('uuid/v4');
 
 const config = {
   port: 4000,
@@ -31,6 +32,8 @@ const mapping = new Map()
 
 server.onopen = (ws) => {
   ws.hash = hashForString(ws.ip)
+  ws.uuid = uuid()
+
   party.add(ws.ip)
 
   server.send(ws, {
@@ -44,7 +47,7 @@ server.onopen = (ws) => {
   }
 
   const newIndex = lines.push(line) - 1
-  mapping.set(ws, newIndex)
+  mapping.set(ws.uuid, newIndex)
 
   server.sendToAll({ added: { i: newIndex, line } })
 }
@@ -52,9 +55,9 @@ server.onopen = (ws) => {
 server.onclose = (ws) => {
   party.remove(ws.ip)
 
-  const i = mapping.get(ws)
+  const i = mapping.get(ws.uuid)
   lines.splice(i, 1)
-  mapping.delete(ws)
+  mapping.delete(ws.uuid)
 
   server.sendToAll({ removed: i })
 }
@@ -70,7 +73,7 @@ server.commands = {
   text(ws, text) {
     text = text.substring(0, 256).replace(/[^\x20-\x7F]/g, '')
 
-    const i = mapping.get(ws)
+    const i = mapping.get(ws.uuid)
     lines[i].text = text
     server.sendToAll({ update: { i, text } })
   }
