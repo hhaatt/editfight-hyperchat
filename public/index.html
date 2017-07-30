@@ -95,16 +95,8 @@
       margin-top: 2em;
     }
 
-    #story-container {
-      margin-top: 2em;
-      background-color: white;
-      padding: 1em;
-      border-radius: 0.33em;
-      border-bottom: 0.25em #e8e8e8 solid;
-    }
-
     #input {
-      width: 16ch;
+      width: 100%;
       font-family: serif;
       border: 0;
       border-bottom: 4px solid #ad4949;
@@ -114,19 +106,14 @@
       font-weight: bold;
     }
 
-    #story {
+    .line {
+      margin: 1em 0;
+      background-color: white;
+      padding: 1em;
+      border-radius: 0.33em;
+      border-bottom: 0.25em #e8e8e8 solid;
       font-family: serif;
       font-weight: bold;
-    }
-
-    .word {
-      margin-right: 1ch;
-      display: inline-block;
-    }
-
-    .newline {
-      display: block;
-      margin: 1em 0;
     }
 
     #announcements {
@@ -207,21 +194,18 @@
         </div>
 
         <div v-if="connected">
-          <!-- <p id="story-container">
-            <span id="story"
-                  v-for="word in words"
-                  v-bind:class="word.className"
-                  v-bind:style="{ color: word.color }">{{ word.text }}</span>
-            <input v-if="connected"
-                   v-focus
-                   type="text"
-                   id="input"
-                   maxlength="16"
-                   autocapitalize="none"
-                   v-model="typingWord"
-                   v-on:keydown="sendWord($event)"
-                   v-bind:style="{ color: myColor }">
-          </p> -->
+          <input v-focus
+                 type="text"
+                 id="input"
+                 autocapitalize="none"
+                 v-model="myText"
+                 v-on:input="updateText($event)"
+                 v-bind:style="{ color: myColor }">
+          <div class="line"
+               v-for="line in lines"
+               v-bind:style="{ color: line.color }">
+            {{ line.text }}
+          </div>
         </div>
 
       </section>
@@ -330,22 +314,6 @@
 
     function showAnnouncement(text) {
       app.announcements.push(text)
-    }
-
-    // function addWord(word) {
-    //   const newline = (word.text === '...')
-    //   app.words.push({
-    //     text: newline ? '' : word.text,
-    //     color: colorForHash(word.hash),
-    //     className: newline ? 'newline' : 'word',
-    //   })
-    // }
-
-    function insertLine(line) {
-      // app.chatLines.push({
-      //   text: line.text,
-      //   color: colorForHash(line.hash),
-      // })
     }
 
     function colorForHash(hash) {

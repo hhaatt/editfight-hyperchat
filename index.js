@@ -68,7 +68,7 @@ server.commands = {
   },
 
   text(ws, text) {
-    text = text.substring(0, 16).replace(/[^\x20-\x7F]/g, '')
+    text = text.substring(0, 256).replace(/[^\x20-\x7F]/g, '')
 
     const i = mapping.get(ws)
     lines[i].text = text
