@@ -57,14 +57,14 @@ function sendCounterUpdateToAll() {
 
 server.commands = {
 
-  say(ws, json) {
+  say(ws, text) {
     server.sendToAll({
-      announcement: json.text
+      announcement: text
     })
   },
 
-  tab(ws, json) {
-    const theCounter = counter[json.tab]
+  tab(ws, tab) {
+    const theCounter = counter[tab]
     if (!theCounter || theCounter === ws.counter)
       return
 
@@ -75,8 +75,8 @@ server.commands = {
     sendCounterUpdateToAll()
   },
 
-  story(ws, json) {
-    const text = json.text.substring(0, 16).replace(/[^\x21-\x7F]/g, '')
+  story(ws, text) {
+    text = text.substring(0, 16).replace(/[^\x21-\x7F]/g, '')
     if (text.length === 0)
       return
 
@@ -100,8 +100,8 @@ server.commands = {
     }
   },
 
-  chat(ws, json) {
-    const text = json.text.substring(0, 256).replace(/[^\x20-\x7F]/g, '')
+  chat(ws, text) {
+    text = text.substring(0, 256).replace(/[^\x20-\x7F]/g, '')
     if (text.length === 0)
       return
 

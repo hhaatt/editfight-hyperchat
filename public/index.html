@@ -363,10 +363,7 @@
           if (!app.typingWord)
             return
 
-          send({
-            kind: 'story',
-            text: app.typingWord,
-          })
+          send({ story: app.typingWord })
 
           app.typingWord = ''
         },
@@ -375,10 +372,7 @@
           if (!app.typingChat)
             return
 
-          send({
-            kind: 'chat',
-            text: app.typingChat,
-          })
+          send({ chat: app.typingChat })
 
           app.typingChat = ''
         },
@@ -386,10 +380,7 @@
         chooseTab(tab, inputName) {
           this.tab = tab
           window.location.href = '#' + tab
-          send({
-            kind: 'tab',
-            tab: tab,
-          })
+          send({ tab: tab })
         },
 
       }
@@ -411,10 +402,7 @@
       app.chatLines = []
       app.connected = true
 
-      send({
-        kind: 'tab',
-        tab: app.tab,
-      })
+      send({ tab: app.tab })
     }
 
     connection.onclose = (e) => {
