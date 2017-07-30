@@ -26,7 +26,7 @@
       padding: 0;
     }
 
-    h1, h2, h3, h4, h5, h6, p, ul, li {
+    h1, h2, h3, h4, h5, h6, p, ul, ol, li {
       margin: 1em 0;
     }
 
@@ -80,26 +80,15 @@
       margin: 0;
     }
 
-    nav {
+    #subhead {
       background: white;
+      padding: 1em 0;
     }
 
-    nav ul {
-      display: flex;
-    }
-
-    .tab-button {
-      flex-grow: 1;
-      list-style-type: none;
-      text-align: center;
-      padding: 1em 0.5em;
-      border: 0;
-      border-bottom: 3px solid transparent;
+    #explain-button {
       cursor: pointer;
-    }
-
-    .tab-button.current {
-      border-color: #ad4949;
+      text-decoration: underline;
+      color: #ad4949;
     }
 
     main {
@@ -140,10 +129,6 @@
       margin: 1em 0;
     }
 
-    .counter {
-      font-weight: bold;
-    }
-
     #announcements {
       position: fixed;
       z-index: 9;
@@ -170,34 +155,6 @@
       margin-bottom: 1em;
       text-decoration: underline;
     }
-
-    #chat-container {
-      border: 1px solid #ccc;
-      border-radius: 0.25em;
-      background: white;
-    }
-
-    #chat-input {
-      width: 100%;
-      padding: 0.5em;
-      outline: 0;
-      border: 0;
-      border-radius: 0;
-      border-bottom: 1px solid #ccc;
-      background-color: transparent;
-    }
-
-    #chat-lines {
-      padding: 0.5em;
-      padding-bottom: 0;
-    }
-
-    .chat-line {
-      margin: 0em;
-      padding-bottom: 0.5em;
-      margin-left: 2em;
-      text-indent: -2em;
-    }
   </style>
 </head>
 
@@ -223,53 +180,34 @@
         </section>
       </header>
 
-      <nav>
+      <div id="subhead">
         <section class="column">
-          <ul id="tabbar">
-            <li v-on:click="chooseTab('what')"
-                class="tab-button"
-                v-bind:class="tab === 'what' ? 'current' : ''">
-              Explanation
-              <span class="counter">({{ counts.idle }})</span>
-            </li>
-            <li v-on:click="chooseTab('story')"
-                class="tab-button"
-                v-bind:class="tab === 'story' ? 'current' : ''">
-              Hyper-real-time chat
-              <span class="counter">({{ counts.story }})</span>
-            </li>
-            <li v-on:click="chooseTab('chat')"
-                class="tab-button"
-                v-bind:class="tab === 'chat' ? 'current' : ''">
-              Meta discussion
-              <span class="counter">({{ counts.chat }})</span>
-            </li>
-          </ul>
+          <p id="explain-button"
+             v-on:click="explain = !explain">
+            What's all this then?
+          </p>
+          <div v-if="explain"
+               id="explain-body">
+            <h2>Hyper-real-time chat.</h2>
+            <ol>
+              <li>Everyone gets one textbox.</li>
+              <li>Everyone can see everyone else's textbox.</li>
+              <li>All changes are seen by everyone immediately.</li>
+            </ol>
+          </div>
         </section>
-      </nav>
+      </div>
     </div>
 
     <main>
       <section class="column">
 
-        <div v-if="tab === 'what'">
-          <h2>What is this?</h2>
-          <p>Hyper-real-time chat.</p>
-          <h2>How does it work?</h2>
-          <ol>
-            <li>Click the middle tab at the top of this page.</li>
-            <li>Start typing, everyone sees it live.</li>
-            <li>You see everyone else's typing live too.</li>
-          </ol>
-          <h2>Pro tips</h2>
-          <ul>
-            <li>Each tab shows how many people are on it, including yourself.</li>
-            <li>The third tab is for discussing stuff <i>outside</i> the story.</li>
-          </ul>
+        <div v-if="!connected">
+
         </div>
 
-        <div v-if="tab === 'story'">
-          <p id="story-container">
+        <div v-if="connected">
+          <!-- <p id="story-container">
             <span id="story"
                   v-for="word in words"
                   v-bind:class="word.className"
@@ -283,24 +221,7 @@
                    v-model="typingWord"
                    v-on:keydown="sendWord($event)"
                    v-bind:style="{ color: myColor }">
-          </p>
-        </div>
-
-        <div v-if="tab === 'chat'">
-          <div id="chat-container">
-            <input type="text"
-                   id="chat-input"
-                   v-model="typingChat"
-                   v-on:keydown.13="sendChat"
-                   v-bind:style="{ color: myColor }"
-                   v-focus
-                   v-if="connected">
-            <div id="chat-lines">
-              <p class="chat-line"
-                 v-for="chatLine in chatLines.slice().reverse()"
-                 v-bind:style="{ color: chatLine.color }">{{ chatLine.text }}</p>
-            </div>
-          </div>
+          </p> -->
         </div>
 
       </section>
@@ -319,10 +240,6 @@
 
     const connection = new WebSocket(`ws://${location.host}:4000`)
 
-    const validTabs = new Set(['what', 'story', 'chat'])
-    const possibleTab = (location.hash || '#').substring(1)
-    const tab = validTabs.has(possibleTab) ? possibleTab : 'what'
-
     Vue.directive('focus', {
       componentUpdated(el) {
         el.focus()
@@ -332,18 +249,11 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        explain: false,
         connected: false,
-        tab,
         myColor: 'black',
         typingWord: '',
         typingChat: '',
-        counts: {
-          idle: 'n',
-          story: 'n',
-          chat: 'n',
-        },
-        chatLines: [],
-        words: [],
         announcements: [],
       },
       methods: {
@@ -386,32 +296,14 @@
       }
     })
 
-    app.chatLines.push({
-      text: "Connecting...",
-      color: 'black'
-    })
-
-    app.words.push({
-      text: "Connecting...",
-      color: 'black',
-      className: 'word'
-    })
-
     connection.onopen = () => {
-      app.words = []
-      app.chatLines = []
       app.connected = true
-
-      send({ tab: app.tab })
     }
 
     connection.onclose = (e) => {
       app.connected = false
-
       console.log('closing', e)
-
       showAnnouncement('Disconnected. Auto-refreshing in 3 seconds.')
-
       setTimeout(() => {
         window.location.reload(true)
       }, 3000)
@@ -420,10 +312,6 @@
     connection.onerror = (error) => {
       console.log('erroring')
       showAnnouncement("The server is probably down. Or maybe you're offline.")
-    }
-
-    const config = {
-
     }
 
     const commands = {
@@ -453,10 +341,6 @@
         showAnnouncement('The story has been archived. Good work everyone. A new story begins. Start procedure "Initiate BEGIN-MODE: activate"!')
       },
 
-      maxChatLines(maxChatLines) {
-        config.maxChatLines = maxChatLines
-      },
-
     }
 
     connection.onmessage = (message) => {
@@ -484,8 +368,6 @@
         text: line.text,
         color: colorForHash(line.hash),
       })
-
-      app.chatLines = app.chatLines.slice(-config.maxChatLines)
     }
 
     function colorForHash(hash) {

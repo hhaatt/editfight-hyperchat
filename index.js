@@ -24,32 +24,22 @@ const server = new Server({
 
 
 
-let counter = new Set()
+
+
+
 
 server.onopen = (ws) => {
   ws.hash = hashForString(ws.ip)
   party.add(ws.ip)
 
-  counter.add(ws)
-
-  sendCounterUpdateToAll()
-
   server.send(ws, {
-    words: story.words,
+    // words: story.words,
     hash: ws.hash,
   })
 }
 
 server.onclose = (ws) => {
   party.remove(ws.ip)
-  counter.delete(ws)
-  sendCounterUpdateToAll()
-}
-
-function sendCounterUpdateToAll() {
-  server.sendToAll({
-    counter: counter.size
-  })
 }
 
 server.commands = {
@@ -60,30 +50,30 @@ server.commands = {
     })
   },
 
-  story(ws, text) {
-    text = text.substring(0, 16).replace(/[^\x21-\x7F]/g, '')
-    if (text.length === 0)
-      return
+  // story(ws, text) {
+  //   text = text.substring(0, 16).replace(/[^\x21-\x7F]/g, '')
+  //   if (text.length === 0)
+  //     return
 
-    const word = {
-      text: text,
-      hash: ws.hash
-    }
+  //   const word = {
+  //     text: text,
+  //     hash: ws.hash
+  //   }
 
-    story.add(word)
+  //   story.add(word)
 
-    if (story.full) {
-      story.rollover()
-      server.sendToAll({
-        reset: true
-      })
-    }
-    else {
-      server.sendToAll({
-        words: [word]
-      })
-    }
-  },
+  //   if (story.full) {
+  //     story.rollover()
+  //     server.sendToAll({
+  //       reset: true
+  //     })
+  //   }
+  //   else {
+  //     server.sendToAll({
+  //       words: [word]
+  //     })
+  //   }
+  // },
 
 }
 
