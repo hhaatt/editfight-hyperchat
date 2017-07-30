@@ -1,57 +1,54 @@
 "use strict";
 
-const log = require('./lib/log')
-const config = require('./lib/config')
 const { Party } = require('./lib/party')
-const { Story } = require('./lib/story')
 const { Server } = require('./lib/server')
-const { Discussion } = require('./lib/discussion')
 
-process.title = config.title
+const config = {
+  port: 4000,
+  origin: process.env.NODE_ORIGIN,
+  pruneInterval: 30,
+}
 
-const party = new Party(3)
-const story = new Story()
-const discussion = new Discussion()
+process.title = 'editfight-lines'
+
+const party = new Party({
+  maxConns: 3
+})
+
 const server = new Server({
+  port: config.port,
+  origin: config.origin,
+  pruneInterval: config.pruneInterval,
   shouldAllow: (ip) => party.canAdd(ip)
 })
 
-let counter = {
-  story: new Set(),
-  chat: new Set(),
-  what: new Set()
-}
+
+
+let counter = new Set()
 
 server.onopen = (ws) => {
   ws.hash = hashForString(ws.ip)
   party.add(ws.ip)
 
-  ws.counter = counter.what
-  ws.counter.add(ws)
+  counter.add(ws)
 
   sendCounterUpdateToAll()
 
   server.send(ws, {
     words: story.words,
-    lines: discussion.lines,
     hash: ws.hash,
-    maxChatLines: config.maxChatLines,
   })
 }
 
 server.onclose = (ws) => {
   party.remove(ws.ip)
-  ws.counter.delete(ws)
+  counter.delete(ws)
   sendCounterUpdateToAll()
 }
 
 function sendCounterUpdateToAll() {
   server.sendToAll({
-    counts: {
-      story: counter.story.size,
-      chat: counter.chat.size,
-      idle: counter.what.size
-    },
+    counter: counter.size
   })
 }
 
@@ -61,18 +58,6 @@ server.commands = {
     server.sendToAll({
       announcement: text
     })
-  },
-
-  tab(ws, tab) {
-    const theCounter = counter[tab]
-    if (!theCounter || theCounter === ws.counter)
-      return
-
-    ws.counter.delete(ws)
-    ws.counter = theCounter
-    ws.counter.add(ws)
-
-    sendCounterUpdateToAll()
   },
 
   story(ws, text) {
@@ -99,23 +84,6 @@ server.commands = {
       })
     }
   },
-
-  chat(ws, text) {
-    text = text.substring(0, 256).replace(/[^\x20-\x7F]/g, '')
-    if (text.length === 0)
-      return
-
-    const line = {
-      text: text,
-      hash: ws.hash
-    }
-
-    discussion.add(line)
-
-    server.sendToAll({
-      lines: [line]
-    })
-  }
 
 }
 
