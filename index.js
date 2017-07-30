@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require('./lib/log')
 const { Party } = require('./lib/party')
 const { Server } = require('./lib/server')
 const uuid = require('uuid/v4');
@@ -27,7 +28,6 @@ const server = new Server({
 
 
 const lines = []
-const mapping = new Map()
 
 
 server.onopen = (ws) => {
@@ -43,22 +43,20 @@ server.onopen = (ws) => {
 
   const line = {
     hash: ws.hash,
+    uuid: ws.uuid,
     text: '',
   }
 
-  const newIndex = lines.push(line) - 1
-  mapping.set(ws.uuid, newIndex)
-
-  server.sendToAll({ added: { i: newIndex, line } })
+  ws.line = line
+  lines.push(line)
+  server.sendToAll({ added: line })
 }
 
 server.onclose = (ws) => {
   party.remove(ws.ip)
 
-  const i = mapping.get(ws.uuid)
+  const i = lines.indexOf(ws.line)
   lines.splice(i, 1)
-  mapping.delete(ws.uuid)
-
   server.sendToAll({ removed: i })
 }
 
@@ -72,10 +70,8 @@ server.commands = {
 
   text(ws, text) {
     text = text.substring(0, 256).replace(/[^\x20-\x7F]/g, '')
-
-    const i = mapping.get(ws.uuid)
-    lines[i].text = text
-    server.sendToAll({ update: { i, text } })
+    ws.line.text = text
+    server.sendToAll({ update: { uuid: ws.uuid, text } })
   }
 
 }

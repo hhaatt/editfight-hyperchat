@@ -96,14 +96,12 @@
     }
 
     #input {
+      display: block;
       width: 100%;
-      font-family: serif;
       border: 0;
       border-bottom: 4px solid #ad4949;
       outline: none;
       -webkit-appearance: none;
-      border-radius: 0;
-      font-weight: bold;
     }
 
     .line {
@@ -197,6 +195,7 @@
           <input v-focus
                  type="text"
                  id="input"
+                 class="line"
                  autocapitalize="none"
                  v-model="myText"
                  v-on:input="updateText($event)"
@@ -283,12 +282,13 @@
           app.lines.push({
             text: line.text,
             color: colorForHash(line.hash),
+            uuid: line.uuid,
           })
         })
       },
 
-      added(json) {
-        app.lines.splice(json.i, 0, json.line)
+      added(line) {
+        app.lines.push(line)
       },
 
       removed(i) {
@@ -296,7 +296,7 @@
       },
 
       update(json) {
-        app.lines[json.i].text = json.text
+        app.lines.find((line) => line.uuid === json.uuid).text = json.text
       },
 
       announcement(text) {
