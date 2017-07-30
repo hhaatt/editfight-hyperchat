@@ -25,7 +25,8 @@ const server = new Server({
 
 
 
-
+const lines = []
+const mapping = new Map()
 
 
 server.onopen = (ws) => {
@@ -33,13 +34,29 @@ server.onopen = (ws) => {
   party.add(ws.ip)
 
   server.send(ws, {
-    // words: story.words,
+    initial: lines,
     hash: ws.hash,
   })
+
+  const line = {
+    hash: ws.hash,
+    text: '',
+  }
+
+  const newIndex = lines.push(line) - 1
+  mapping.set(ws, newIndex)
+
+  server.sendToAll({ added: { i: newIndex, line } })
 }
 
 server.onclose = (ws) => {
   party.remove(ws.ip)
+
+  const i = mapping.get(ws)
+  lines.splice(i, 1)
+  mapping.delete(ws)
+
+  server.sendToAll({ removed: i })
 }
 
 server.commands = {
@@ -50,30 +67,13 @@ server.commands = {
     })
   },
 
-  // story(ws, text) {
-  //   text = text.substring(0, 16).replace(/[^\x21-\x7F]/g, '')
-  //   if (text.length === 0)
-  //     return
+  text(ws, text) {
+    text = text.substring(0, 16).replace(/[^\x20-\x7F]/g, '')
 
-  //   const word = {
-  //     text: text,
-  //     hash: ws.hash
-  //   }
-
-  //   story.add(word)
-
-  //   if (story.full) {
-  //     story.rollover()
-  //     server.sendToAll({
-  //       reset: true
-  //     })
-  //   }
-  //   else {
-  //     server.sendToAll({
-  //       words: [word]
-  //     })
-  //   }
-  // },
+    const i = mapping.get(ws)
+    lines[i].text = text
+    server.sendToAll({ update: { i, text } })
+  }
 
 }
 

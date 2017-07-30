@@ -203,7 +203,7 @@
       <section class="column">
 
         <div v-if="!connected">
-
+          Connecting...
         </div>
 
         <div v-if="connected">
@@ -252,8 +252,8 @@
         explain: false,
         connected: false,
         myColor: 'black',
-        typingWord: '',
-        typingChat: '',
+        myText: '',
+        lines: [],
         announcements: [],
       },
       methods: {
@@ -263,36 +263,9 @@
           this.announcements.splice(i, 1)
         },
 
-        sendWord(e) {
-          if (e.keyCode !== 32 && e.keyCode !== 13)
-            return
-
-          if (e.keyCode === 32)
-            e.preventDefault()
-
-          if (!app.typingWord)
-            return
-
-          send({ story: app.typingWord })
-
-          app.typingWord = ''
+        updateText() {
+          send({ text: app.myText })
         },
-
-        sendChat() {
-          if (!app.typingChat)
-            return
-
-          send({ chat: app.typingChat })
-
-          app.typingChat = ''
-        },
-
-        chooseTab(tab, inputName) {
-          this.tab = tab
-          window.location.href = '#' + tab
-          send({ tab: tab })
-        },
-
       }
     })
 
@@ -311,34 +284,39 @@
 
     connection.onerror = (error) => {
       console.log('erroring')
-      showAnnouncement("The server is probably down. Or maybe you're offline.")
+      // showAnnouncement("The server is probably down. Or maybe you're offline.")
     }
 
     const commands = {
-
-      words(words) {
-        words.forEach(addWord)
-      },
-
-      lines(lines) {
-        lines.forEach(addChat)
-      },
 
       hash(hash) {
         app.myColor = colorForHash(hash)
       },
 
-      counts(counts) {
-        app.counts = counts
+      initial(lines) {
+        app.lines = []
+        lines.forEach((line) => {
+          app.lines.push({
+            text: line.text,
+            color: colorForHash(line.hash),
+          })
+        })
+      },
+
+      added(json) {
+        app.lines.splice(json.i, 0, json.line)
+      },
+
+      removed(i) {
+        app.lines.splice(i, 1)
+      },
+
+      update(json) {
+        app.lines[json.i].text = json.text
       },
 
       announcement(text) {
         showAnnouncement(text)
-      },
-
-      reset() {
-        app.words = []
-        showAnnouncement('The story has been archived. Good work everyone. A new story begins. Start procedure "Initiate BEGIN-MODE: activate"!')
       },
 
     }
@@ -354,20 +332,20 @@
       app.announcements.push(text)
     }
 
-    function addWord(word) {
-      const newline = (word.text === '...')
-      app.words.push({
-        text: newline ? '' : word.text,
-        color: colorForHash(word.hash),
-        className: newline ? 'newline' : 'word',
-      })
-    }
+    // function addWord(word) {
+    //   const newline = (word.text === '...')
+    //   app.words.push({
+    //     text: newline ? '' : word.text,
+    //     color: colorForHash(word.hash),
+    //     className: newline ? 'newline' : 'word',
+    //   })
+    // }
 
-    function addChat(line) {
-      app.chatLines.push({
-        text: line.text,
-        color: colorForHash(line.hash),
-      })
+    function insertLine(line) {
+      // app.chatLines.push({
+      //   text: line.text,
+      //   color: colorForHash(line.hash),
+      // })
     }
 
     function colorForHash(hash) {
