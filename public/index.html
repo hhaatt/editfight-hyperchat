@@ -34,9 +34,13 @@
       font-size: 24px
     }
 
+    h2 {
+      margin: 1.5em 0;
+    }
+
     li {
       list-style-position: inside;
-      margin: 1em 0;
+      margin: 0.5em 0;
     }
 
     a {
@@ -231,7 +235,7 @@
             <li v-on:click="chooseTab('story')"
                 class="tab-button"
                 v-bind:class="tab === 'story' ? 'current' : ''">
-              The Game
+              Hyper-real-time chat
               <span class="counter">({{ counts.story }})</span>
             </li>
             <li v-on:click="chooseTab('chat')"
@@ -250,17 +254,15 @@
 
         <div v-if="tab === 'what'">
           <h2>What is this?</h2>
-          <p>A live multiplayer story where anyone can add to the story and everyone currently playing can see the changes immediately.</p>
-          <p>My kids and I like playing one-word-story together, and thought it would make for a fun online game too.</p>
+          <p>Hyper-real-time chat.</p>
           <h2>How does it work?</h2>
           <ol>
             <li>Click the middle tab at the top of this page.</li>
-            <li>Type a word and press enter or space.</li>
-            <li>Everyone else will immediately see your word.</li>
+            <li>Start typing, everyone sees it live.</li>
+            <li>You see everyone else's typing live too.</li>
           </ol>
           <h2>Pro tips</h2>
           <ul>
-            <li>Typing ... starts a new paragraph.</li>
             <li>Each tab shows how many people are on it, including yourself.</li>
             <li>The third tab is for discussing stuff <i>outside</i> the story.</li>
           </ul>
