@@ -1,0 +1,7 @@
+{
+  "indent_size": 2,
+  "brace_style": "end-expand,preserve-inline",
+  "selector_separator_newline": false,
+  "wrap_attributes": "force-aligned",
+  "space_around_combinator": true
+}

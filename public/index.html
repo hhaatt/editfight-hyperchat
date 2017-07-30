@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>EditFight.com</title>
+  <meta charset="utf-8">
+  <meta content="initial-scale=1.0"
+        name="viewport">
+  <script src="//unpkg.com/vue/dist/vue.min.js"></script>
+  <style>
+    html {
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      color: #555;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
+      font-size: inherit;
+      font-family: inherit;
+      background-color: inherit;
+      color: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6, p, ul, li {
+      margin: 1em 0;
+    }
+
+    h1 {
+      font-size: 24px
+    }
+
+    li {
+      list-style-position: inside;
+      margin: 1em 0;
+    }
+
+    a {
+      color: blue;
+    }
+
+    a:visited {
+      color: purple;
+    }
+
+    a:hover {
+      color: crimson;
+    }
+
+    .column {
+      margin: 0 auto;
+      width: 90%;
+      max-width: 40em;
+    }
+
+    header {
+      background-color: #ad4949;
+    }
+
+    header h1 {
+      margin: 0;
+      padding: 1em 0;
+      font-weight: normal;
+    }
+
+    header a {
+      color: white !important;
+      text-decoration: none;
+    }
+
+    #tabbar, #tabbar li {
+      margin: 0;
+    }
+
+    nav {
+      background: white;
+    }
+
+    nav ul {
+      display: flex;
+    }
+
+    .tab-button {
+      flex-grow: 1;
+      list-style-type: none;
+      text-align: center;
+      padding: 1em 0.5em;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+    }
+
+    .tab-button.current {
+      border-color: #ad4949;
+    }
+
+    main {
+      margin-top: 2em;
+    }
+
+    #story-container {
+      margin-top: 2em;
+      background-color: white;
+      padding: 1em;
+      border-radius: 0.33em;
+      border-bottom: 0.25em #e8e8e8 solid;
+    }
+
+    #input {
+      width: 16ch;
+      font-family: serif;
+      border: 0;
+      border-bottom: 4px solid #ad4949;
+      outline: none;
+      -webkit-appearance: none;
+      border-radius: 0;
+      font-weight: bold;
+    }
+
+    #story {
+      font-family: serif;
+      font-weight: bold;
+    }
+
+    .word {
+      margin-right: 1ch;
+      display: inline-block;
+    }
+
+    .newline {
+      display: block;
+      margin: 1em 0;
+    }
+
+    .counter {
+      font-weight: bold;
+    }
+
+    #announcements {
+      position: fixed;
+      z-index: 9;
+      top: 0;
+      left: 1em;
+      right: 1em;
+      margin: 0;
+      background: transparent;
+    }
+
+    .announcement {
+      background: #fdfdc0;
+      padding: 1em;
+      border-radius: 0.25em;
+      border: 1px solid #b3b372;
+      margin-top: 1em;
+    }
+
+    .announcement-close {
+      float: right;
+      color: red;
+      cursor: pointer;
+      margin-left: 1em;
+      margin-bottom: 1em;
+      text-decoration: underline;
+    }
+
+    #chat-container {
+      border: 1px solid #ccc;
+      border-radius: 0.25em;
+      background: white;
+    }
+
+    #chat-input {
+      width: 100%;
+      padding: 0.5em;
+      outline: 0;
+      border: 0;
+      border-radius: 0;
+      border-bottom: 1px solid #ccc;
+      background-color: transparent;
+    }
+
+    #chat-lines {
+      padding: 0.5em;
+      padding-bottom: 0;
+    }
+
+    .chat-line {
+      margin: 0em;
+      padding-bottom: 0.5em;
+      margin-left: 2em;
+      text-indent: -2em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="vue-app">
+
+    <div id="announcements">
+      <div class="announcement"
+           v-for="announcement in announcements">
+        <span class="announcement-close"
+              v-on:click="closeAnnouncement(announcement)">[close]</span>
+        <span>{{ announcement }}</span>
+      </div>
+    </div>
+
+    <div id="sticky-header">
+      <header>
+        <section class="column">
+          <h1>
+            <a href="/">lines.editfight.com</a>
+          </h1>
+        </section>
+      </header>
+
+      <nav>
+        <section class="column">
+          <ul id="tabbar">
+            <li v-on:click="chooseTab('what')"
+                class="tab-button"
+                v-bind:class="tab === 'what' ? 'current' : ''">
+              Explanation
+              <span class="counter">({{ counts.idle }})</span>
+            </li>
+            <li v-on:click="chooseTab('story')"
+                class="tab-button"
+                v-bind:class="tab === 'story' ? 'current' : ''">
+              The Game
+              <span class="counter">({{ counts.story }})</span>
+            </li>
+            <li v-on:click="chooseTab('chat')"
+                class="tab-button"
+                v-bind:class="tab === 'chat' ? 'current' : ''">
+              Meta discussion
+              <span class="counter">({{ counts.chat }})</span>
+            </li>
+          </ul>
+        </section>
+      </nav>
+    </div>
+
+    <main>
+      <section class="column">
+
+        <div v-if="tab === 'what'">
+          <h2>What is this?</h2>
+          <p>A live multiplayer story where anyone can add to the story and everyone currently playing can see the changes immediately.</p>
+          <p>My kids and I like playing one-word-story together, and thought it would make for a fun online game too.</p>
+          <h2>How does it work?</h2>
+          <ol>
+            <li>Click the middle tab at the top of this page.</li>
+            <li>Type a word and press enter or space.</li>
+            <li>Everyone else will immediately see your word.</li>
+          </ol>
+          <h2>Pro tips</h2>
+          <ul>
+            <li>Typing ... starts a new paragraph.</li>
+            <li>Each tab shows how many people are on it, including yourself.</li>
+            <li>The third tab is for discussing stuff <i>outside</i> the story.</li>
+          </ul>
+        </div>
+
+        <div v-if="tab === 'story'">
+          <p id="story-container">
+            <span id="story"
+                  v-for="word in words"
+                  v-bind:class="word.className"
+                  v-bind:style="{ color: word.color }">{{ word.text }}</span>
+            <input v-if="connected"
+                   v-focus
+                   type="text"
+                   id="input"
+                   maxlength="16"
+                   autocapitalize="none"
+                   v-model="typingWord"
+                   v-on:keydown="sendWord($event)"
+                   v-bind:style="{ color: myColor }">
+          </p>
+        </div>
+
+        <div v-if="tab === 'chat'">
+          <div id="chat-container">
+            <input type="text"
+                   id="chat-input"
+                   v-model="typingChat"
+                   v-on:keydown.13="sendChat"
+                   v-bind:style="{ color: myColor }"
+                   v-focus
+                   v-if="connected">
+            <div id="chat-lines">
+              <p class="chat-line"
+                 v-for="chatLine in chatLines.slice().reverse()"
+                 v-bind:style="{ color: chatLine.color }">{{ chatLine.text }}</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    "use strict";
+
+    window.WebSocket = window.WebSocket || window.MozWebSocket
+    if (!window.WebSocket) {
+      showAnnouncement("Your browser doesn't support this website. Please let me know what browser it is because I thought all browsers supported websockets at this point.")
+      throw new Error('No websocket support.')
+    }
+
+    const connection = new WebSocket(`ws://${location.host}:4000`)
+
+    const validTabs = new Set(['what', 'story', 'chat'])
+    const possibleTab = (location.hash || '#').substring(1)
+    const tab = validTabs.has(possibleTab) ? possibleTab : 'what'
+
+    Vue.directive('focus', {
+      componentUpdated(el) {
+        el.focus()
+      }
+    })
+
+    const app = new Vue({
+      el: '#vue-app',
+      data: {
+        connected: false,
+        tab,
+        myColor: 'black',
+        typingWord: '',
+        typingChat: '',
+        counts: {
+          idle: 'n',
+          story: 'n',
+          chat: 'n',
+        },
+        chatLines: [],
+        words: [],
+        announcements: [],
+      },
+      methods: {
+
+        closeAnnouncement(ann) {
+          const i = this.announcements.indexOf(ann)
+          this.announcements.splice(i, 1)
+        },
+
+        sendWord(e) {
+          if (e.keyCode !== 32 && e.keyCode !== 13)
+            return
+
+          if (e.keyCode === 32)
+            e.preventDefault()
+
+          if (!app.typingWord)
+            return
+
+          send({
+            kind: 'story',
+            text: app.typingWord,
+          })
+
+          app.typingWord = ''
+        },
+
+        sendChat() {
+          if (!app.typingChat)
+            return
+
+          send({
+            kind: 'chat',
+            text: app.typingChat,
+          })
+
+          app.typingChat = ''
+        },
+
+        chooseTab(tab, inputName) {
+          this.tab = tab
+          window.location.href = '#' + tab
+          send({
+            kind: 'tab',
+            tab: tab,
+          })
+        },
+
+      }
+    })
+
+    app.chatLines.push({
+      text: "Connecting...",
+      color: 'black'
+    })
+
+    app.words.push({
+      text: "Connecting...",
+      color: 'black',
+      className: 'word'
+    })
+
+    connection.onopen = () => {
+      app.words = []
+      app.chatLines = []
+      app.connected = true
+
+      send({
+        kind: 'tab',
+        tab: app.tab,
+      })
+    }
+
+    connection.onclose = (e) => {
+      app.connected = false
+
+      console.log('closing', e)
+
+      showAnnouncement('Disconnected. Auto-refreshing in 3 seconds.')
+
+      setTimeout(() => {
+        window.location.reload(true)
+      }, 3000)
+    }
+
+    connection.onerror = (error) => {
+      console.log('erroring')
+      showAnnouncement("The server is probably down. Or maybe you're offline.")
+    }
+
+    const config = {
+
+    }
+
+    const commands = {
+
+      words(words) {
+        words.forEach(addWord)
+      },
+
+      lines(lines) {
+        lines.forEach(addChat)
+      },
+
+      hash(hash) {
+        app.myColor = colorForHash(hash)
+      },
+
+      counts(counts) {
+        app.counts = counts
+      },
+
+      announcement(text) {
+        showAnnouncement(text)
+      },
+
+      reset() {
+        app.words = []
+        showAnnouncement('The story has been archived. Good work everyone. A new story begins. Start procedure "Initiate BEGIN-MODE: activate"!')
+      },
+
+      maxChatLines(maxChatLines) {
+        config.maxChatLines = maxChatLines
+      },
+
+    }
+
+    connection.onmessage = (message) => {
+      const json = JSON.parse(message.data)
+      Object.entries(json).forEach(([key, value]) => {
+        commands[key](value)
+      })
+    }
+
+    function showAnnouncement(text) {
+      app.announcements.push(text)
+    }
+
+    function addWord(word) {
+      const newline = (word.text === '...')
+      app.words.push({
+        text: newline ? '' : word.text,
+        color: colorForHash(word.hash),
+        className: newline ? 'newline' : 'word',
+      })
+    }
+
+    function addChat(line) {
+      app.chatLines.push({
+        text: line.text,
+        color: colorForHash(line.hash),
+      })
+
+      app.chatLines = app.chatLines.slice(-config.maxChatLines)
+    }
+
+    function colorForHash(hash) {
+      const hue = hash % 180 + 180
+      const sat = Math.abs(hash) % 50 + 30
+      const light = Math.abs(hash) % 60 + 20
+      return `hsl(${hue}, ${sat}%, ${light}%)`
+    }
+
+    function send(msg) {
+      connection.send(JSON.stringify(msg))
+    }
+  </script>
+</body>
+
+</html>

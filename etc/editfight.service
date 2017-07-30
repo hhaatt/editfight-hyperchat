@@ -1,0 +1,13 @@
+[Unit]
+Description=EditFight-Lines
+
+[Service]
+User=ubuntu
+Group=ubuntu
+Environment=NODE_ORIGIN=http://eachline.editfight.com
+WorkingDirectory=/home/ubuntu/app
+ExecStart=/usr/bin/node index.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
