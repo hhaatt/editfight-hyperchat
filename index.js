@@ -39,6 +39,7 @@ server.onopen = (ws) => {
   server.send(ws, {
     initial: lines,
     hash: ws.hash,
+    uuid: ws.uuid,
   })
 
   const line = {

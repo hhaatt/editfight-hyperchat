@@ -192,19 +192,22 @@
         </div>
 
         <div v-if="connected">
-          <input v-focus
-                 type="text"
-                 id="input"
-                 class="line"
-                 autocapitalize="none"
-                 v-model="myText"
-                 v-on:input="updateText($event)"
-                 v-bind:style="{ color: myColor }">
-          <div class="line"
-               v-for="line in lines"
-               v-bind:style="{ color: line.color }">
-            {{ line.text }}
-          </div>
+          <template v-for="line in lines">
+            <input v-focus
+                   v-if="line.uuid === uuid"
+                   type="text"
+                   id="input"
+                   class="line"
+                   autocapitalize="none"
+                   v-model="myText"
+                   v-on:input="updateText($event)"
+                   v-bind:style="{ color: myColor }">
+            <div class="line"
+                v-else
+                v-bind:style="{ color: line.color }">
+              {{ line.text }}
+            </div>
+          </template>
         </div>
 
       </section>
@@ -224,8 +227,10 @@
     const connection = new WebSocket(`ws://${location.host}:4000`)
 
     Vue.directive('focus', {
-      componentUpdated(el) {
-        el.focus()
+      inserted(el) {
+        setTimeout(function() {
+          el.focus()
+        }, 100);
       }
     })
 
@@ -274,6 +279,10 @@
 
       hash(hash) {
         app.myColor = colorForHash(hash)
+      },
+
+      uuid(uuid) {
+        app.uuid = uuid
       },
 
       initial(lines) {
