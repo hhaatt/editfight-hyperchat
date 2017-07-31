@@ -198,13 +198,20 @@
                  v-on:click.prevent="startChatting()">a textbox</a> at the bottom.</li>
             <li>Everyone can see you typing live.</li>
             <li>You can see them typing too.</li>
-            <li>Lines are limited to {{charLimit}} characters.</li>
+            <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
             <li>Refresh to get a new color if you want.</li>
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
+            <li>Voting:
+              <ul>
+                <li>You can upvote max 3 people.</li>
+                <li>If 3 people upvote you, you move up.</li>
+              </ul>
+            </li>
           </ol>
           <p>There are <b>{{count}}</b> people here.</p>
-          <p><b>Hey FP.</b> You're literally going to kill my poor little website. I don't mind but I'm just letting you know why this is going to stop working for everyone soon. It's running on a free tier EC2 server with a single node.js process. So yeah, oops. Oh well.</p>
+          <p><b>Hey FP.</b> You're literally going to kill my poor little website. I don't mind but I'm just letting you know why this is going to stop working for everyone soon. It's running on a free tier EC2 server with a single node.js process. So yeah,
+            oops. Oh well.</p>
         </section>
       </div>
     </div>
@@ -376,7 +383,7 @@
     }
 
     function normalizeText(text) {
-      return text.replace('\n\n\n', '\n') || '\n'
+      return (text.replace(/[\r\n]/g, ' ') || '\n')
     }
 
     function viewModelForModel(line) {
