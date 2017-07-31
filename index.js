@@ -10,6 +10,8 @@ const config = {
   origin: process.env.NODE_ORIGIN,
   pruneInterval: 30,
   charLimit: 1000,
+  allowedUpvoteTimes: 3,
+  upvotesNeededToMoveUp: 3,
 }
 
 process.title = 'editfight-lines'
@@ -75,6 +77,27 @@ server.commands = {
     text = text.substring(0, config.charLimit)
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
+  },
+
+  upvote(ws, uuid) {
+    console.log('upvoting', uuid)
+    if (ws.upvotedTimes >= config.allowedUpvoteTimes)
+      return
+
+    ws.upvotedTimes = (ws.upvotedTimes || 0) + 1
+
+    const oldIndex = lines.findIndex((line) => line.uuid === uuid)
+    if (oldIndex > 0) {
+      const line = lines[oldIndex]
+      line.upvotes = (line.upvotes || 0) + 1
+      if (line.upvotes >= config.upvotesNeededToMoveUp) {
+        const newIndex = oldIndex - 1
+        const tmpLine = lines[newIndex]
+        lines[newIndex] = line
+        lines[oldIndex] = tmpLine
+        server.sendToAll({ moved: oldIndex })
+      }
+    }
   }
 
 }

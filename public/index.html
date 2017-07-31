@@ -134,6 +134,11 @@
       cursor: pointer;
     }
 
+    .upvote-button:disabled {
+      background: #ddd;
+      border-bottom-color: #bbb;
+    }
+
     #announcements {
       position: fixed;
       z-index: 9;
@@ -199,6 +204,7 @@
                  href="http://editfight.com/#chat">here</a>.</li>
           </ol>
           <p>There are <b>{{count}}</b> people here.</p>
+          <p><b>Hey FP.</b> You're literally going to kill my poor little website. I don't mind but I'm just letting you know why this is going to stop working for everyone soon. It's running on a free tier EC2 server with a single node.js process. So yeah, oops. Oh well.</p>
         </section>
       </div>
     </div>
@@ -225,7 +231,7 @@
               <div class="line"
                    v-bind:style="{ color: line.color }">{{ line.text }}</div>
               <div>
-                <button class="upvote-button">&uarr;</button>
+                <button v-bind:disabled="!line.canUpvote" class="upvote-button" v-on:click.prevent="upvote(line.uuid)">&uarr;</button>
               </div>
             </div>
           </template>
@@ -283,6 +289,12 @@
           app.$refs['myTextbox'][0].focus()
         },
 
+        upvote(uuid) {
+          send({ upvote: uuid })
+          const line = app.lines.find((line) => line.uuid === uuid)
+          line.canUpvote = false
+        }
+
       }
     })
 
@@ -335,11 +347,19 @@
 
       update(json) {
         const line = app.lines.find((line) => line.uuid === json.uuid)
-        line.text = json.text || '\n'
+        line.text = normalizeText(json.text)
       },
 
       announcement(text) {
         showAnnouncement(text)
+      },
+
+      moved(oldIndex) {
+        const line = app.lines[oldIndex]
+        const newIndex = oldIndex - 1
+        const tmpLine = app.lines[newIndex]
+        app.lines[newIndex] = line
+        app.lines[oldIndex] = tmpLine
       },
 
     }
@@ -355,11 +375,16 @@
       app.announcements.push(text)
     }
 
+    function normalizeText(text) {
+      return text.replace('\n\n\n', '\n') || '\n'
+    }
+
     function viewModelForModel(line) {
       return {
-        text: line.text || '\n',
+        text: normalizeText(line.text),
         color: colorForHash(line.hash),
         uuid: line.uuid,
+        canUpvote: true,
       }
     }
 
