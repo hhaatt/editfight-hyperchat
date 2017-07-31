@@ -36,10 +36,13 @@ const server = new Server({
 
 const lines = []
 
+const lifetimes = {}
+
 
 server.onopen = (ws) => {
   ws.hash = hashForString(uuid())
   ws.uuid = uuid()
+  ws.joined = (new Date()).getTime()
 
   party.add(ws.ip)
 
@@ -62,6 +65,17 @@ server.onopen = (ws) => {
 }
 
 server.onclose = (ws) => {
+  const leaving = (new Date()).getTime()
+  const duration = leaving - ws.joined
+
+  if (duration < 100) {
+    const quickTimes = (lifetimes[ws.ip] || 0) + 1
+    lifetimes[ws.ip] = quickTimes
+    if (quickTimes >= 3) {
+      banned.push(ws.ip)
+    }
+  }
+
   party.remove(ws.ip)
 
   const i = lines.indexOf(ws.line)
