@@ -193,7 +193,7 @@
                       v-on:input="updateText($event)"
                       v-bind:style="{ color: myColor }"></textarea>
             <div class="line"
-                 v-else
+                 v-else-if="line.text !== '\n'"
                  v-bind:style="{ color: line.color }">{{ line.text }}</div>
           </template>
         </div>
