@@ -85,12 +85,6 @@
       padding: 1em 0;
     }
 
-    #explain-button {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #ad4949;
-    }
-
     main {
       margin-top: 2em;
     }
@@ -168,19 +162,23 @@
 
       <div id="subhead">
         <section class="column">
-          <p id="explain-button"
-             v-on:click="explain = !explain">
-            What's all this then?
+          <h2>Hyper-real-time chat.</h2>
+          <p>
+            <a href="#"
+               v-on:click.prevent="explain = !explain">What does that even mean?</a>
           </p>
           <div v-if="explain"
                id="explain-body">
-            <h2>Hyper-real-time chat.</h2>
             <ol>
-              <li>Everyone gets one textbox.</li>
-              <li>Everyone can see everyone else's textbox.</li>
-              <li>All changes are seen by everyone immediately.</li>
+              <li>You get a textbox at the bottom.</li>
+              <li>Everyone can see you typing live.</li>
+              <li>You can see them typing too.</li>
             </ol>
           </div>
+          <p>
+            <a href="#"
+               v-on:click.prevent="startChatting()">Start typing.</a>
+          </p>
         </section>
       </div>
     </div>
@@ -191,21 +189,21 @@
         <div v-if="!connected">
           Connecting...
         </div>
-
-        <div v-if="connected">
+        <div v-else>
           <template v-for="line in lines">
             <input v-focus
                    v-if="line.uuid === uuid"
                    type="text"
                    id="input"
+                   ref="myTextbox"
                    class="line"
                    autocapitalize="none"
                    v-model="myText"
                    v-on:input="updateText($event)"
                    v-bind:style="{ color: myColor }">
             <div class="line"
-                v-else
-                v-bind:style="{ color: line.color }">{{ line.text }}</div>
+                 v-else
+                 v-bind:style="{ color: line.color }">{{ line.text }}</div>
           </template>
         </div>
 
@@ -227,9 +225,7 @@
 
     Vue.directive('focus', {
       inserted(el) {
-        setTimeout(function() {
-          el.focus()
-        }, 100);
+        el.focus()
       }
     })
 
@@ -253,6 +249,11 @@
         updateText() {
           send({ text: app.myText })
         },
+
+        startChatting() {
+          app.$refs['myTextbox'][0].focus()
+        },
+
       }
     })
 
@@ -298,7 +299,7 @@
 
       update(json) {
         const line = app.lines.find((line) => line.uuid === json.uuid)
-        line.text = json.text
+        line.text = json.text || '\n'
       },
 
       announcement(text) {
@@ -320,7 +321,7 @@
 
     function viewModelForModel(line) {
       return {
-        text: line.text,
+        text: line.text || '\n',
         color: colorForHash(line.hash),
         uuid: line.uuid,
       }
