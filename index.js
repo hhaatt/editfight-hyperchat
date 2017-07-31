@@ -31,7 +31,7 @@ const lines = []
 
 
 server.onopen = (ws) => {
-  ws.hash = hashForString(ws.ip)
+  ws.hash = hashForString(uuid())
   ws.uuid = uuid()
 
   party.add(ws.ip)
