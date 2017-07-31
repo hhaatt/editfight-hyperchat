@@ -70,7 +70,7 @@ server.commands = {
   },
 
   text(ws, text) {
-    text = text.substring(0, 256).replace(/[^\n\x20-\x7F]/g, '')
+    text = text.substring(0, 256)
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
   }
