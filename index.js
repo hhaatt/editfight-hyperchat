@@ -12,6 +12,7 @@ const config = {
   charLimit: 1000,
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
+  differenceThreshold: 100,
 }
 
 process.title = 'editfight-lines'
@@ -70,6 +71,8 @@ server.onclose = (ws) => {
   server.sendToAll({ removed: i })
 }
 
+const maybeBan = {}
+
 server.commands = {
 
   say(ws, text) {
@@ -80,6 +83,21 @@ server.commands = {
 
   text(ws, text) {
     text = text.substring(0, config.charLimit)
+
+    const oldLen = ws.line.text.length
+    const newLen = text.length
+
+    console.log(oldLen, newLen, ws.terminate)
+
+    if (newLen != 0 && Math.abs(oldLen - newLen) > config.differenceThreshold) {
+      maybeBan[ws.ip] = (maybeBan[ws.ip] || 0) + 1
+      if (maybeBan >= 3) {
+        banned.push(ws.ip)
+      }
+      ws.terminate()
+      return
+    }
+
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
   },
@@ -105,6 +123,9 @@ server.commands = {
     let oldIndex = lines.findIndex((line) => line.uuid === ws.uuid)
     if (oldIndex < 1) return
 
+    const line = lines[oldIndex]
+    line.autotop = true
+
     for (let i = oldIndex; i > 0; i--) {
       moveUp(i)
     }
@@ -116,6 +137,10 @@ function moveUp(oldIndex) {
   const newIndex = oldIndex - 1
   const line = lines[oldIndex]
   const tmpLine = lines[newIndex]
+
+  if (tmpLine.autotop)
+    return
+
   lines[newIndex] = line
   lines[oldIndex] = tmpLine
   server.sendToAll({ moved: oldIndex })
