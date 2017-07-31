@@ -12,7 +12,7 @@ const config = {
   charLimit: 1000,
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
-  differenceThreshold: 100,
+  differenceThreshold: 20,
 }
 
 process.title = 'editfight-lines'
@@ -21,10 +21,7 @@ const party = new Party({
   maxConns: 3
 })
 
-const banned = [
-  '192.227.165.56',
-  '176.31.171.134',
-]
+const banned = []
 
 const server = new Server({
   port: config.port,
@@ -89,7 +86,7 @@ server.commands = {
 
     console.log(oldLen, newLen, ws.terminate)
 
-    if (newLen != 0 && Math.abs(oldLen - newLen) > config.differenceThreshold) {
+    if (newLen > 0 && Math.abs(oldLen - newLen) > config.differenceThreshold) {
       maybeBan[ws.ip] = (maybeBan[ws.ip] || 0) + 1
       if (maybeBan >= 3) {
         banned.push(ws.ip)
@@ -104,8 +101,8 @@ server.commands = {
 
   upvote(ws, uuid) {
     console.log('upvoting', uuid)
-    if (ws.upvotedTimes >= config.allowedUpvoteTimes)
-      return
+    // if (ws.upvotedTimes >= config.allowedUpvoteTimes)
+    //   return
 
     ws.upvotedTimes = (ws.upvotedTimes || 0) + 1
 
