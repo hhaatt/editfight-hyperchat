@@ -200,15 +200,10 @@
             <li>Everyone can see you typing live.</li>
             <li>You can see them typing too.</li>
             <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
+            <li>You can vote a box to move them up.</li>
             <li>Refresh to get a new color if you want.</li>
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
-            <li>Voting:
-              <ul>
-                <li>You can upvote max 3 people.</li>
-                <li>If 3 people upvote you, you move up.</li>
-              </ul>
-            </li>
           </ol>
           <p>There are <b>{{count}}</b> people here.</p>
           <p><b>Hey FP.</b> Thanks for visiting. Please remember to upvote.</p>
@@ -240,7 +235,7 @@
               <div class="line"
                    v-bind:style="{ color: line.color }">{{ line.text }}</div>
               <div>
-                <button v-bind:disabled="!line.canUpvote" class="upvote-button" v-on:click.prevent="upvote(line.uuid)">&uarr;</button>
+                <button class="upvote-button" v-on:click.prevent="upvote(line.uuid)">&uarr;</button>
               </div>
             </div>
           </template>
@@ -302,8 +297,6 @@
 
         upvote(uuid) {
           send({ upvote: uuid })
-          const line = app.lines.find((line) => line.uuid === uuid)
-          line.canUpvote = false
         }
 
       }
@@ -395,7 +388,6 @@
         text: normalizeText(line.text),
         color: colorForHash(line.hash),
         uuid: line.uuid,
-        canUpvote: true,
       }
     }
 

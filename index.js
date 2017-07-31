@@ -9,7 +9,7 @@ const config = {
   port: 4000,
   origin: process.env.NODE_ORIGIN,
   pruneInterval: 30,
-  charLimit: 1000,
+  charLimit: 256,
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
@@ -80,39 +80,14 @@ server.commands = {
 
   text(ws, text) {
     text = text.substring(0, config.charLimit)
-
-    // const oldLen = ws.line.text.length
-    // const newLen = text.length
-
-    // console.log(oldLen, newLen, ws.terminate)
-
-    // if (newLen > 0 && oldLen - newLen > config.differenceThreshold) {
-    //   maybeBan[ws.ip] = (maybeBan[ws.ip] || 0) + 1
-    //   if (maybeBan >= 3) {
-    //     banned.push(ws.ip)
-    //   }
-    //   ws.terminate()
-    //   return
-    // }
-
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
   },
 
   upvote(ws, uuid) {
-    console.log('upvoting', uuid)
-    // if (ws.upvotedTimes >= config.allowedUpvoteTimes)
-    //   return
-
-    ws.upvotedTimes = (ws.upvotedTimes || 0) + 1
-
-    const oldIndex = lines.findIndex((line) => line.uuid === uuid)
-    if (oldIndex > 0) {
-      const line = lines[oldIndex]
-      line.upvotes = (line.upvotes || 0) + 1
-      if (line.upvotes >= config.upvotesNeededToMoveUp) {
-        moveUp(oldIndex)
-      }
+    const i = lines.findIndex((line) => line.uuid === uuid)
+    if (i > 0) {
+      moveUp(i)
     }
   },
 
