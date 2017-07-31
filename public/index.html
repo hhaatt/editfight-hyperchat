@@ -99,8 +99,20 @@
       resize: none;
     }
 
-    .line {
+    .line-container {
       margin: 1em 0;
+      display: flex;
+    }
+
+    .line-container > *:first-child {
+      flex: 1 0;
+    }
+
+    .line-container > *:last-child {
+      flex: 0 1;
+    }
+
+    .line {
       background-color: white;
       padding: 1em;
       border-radius: 0.33em;
@@ -108,6 +120,18 @@
       font-family: serif;
       font-weight: bold;
       white-space: pre-wrap;
+    }
+
+    .upvote-button {
+      margin-left: 1em;
+      outline: none;
+      border: 0;
+      border-bottom: 3px solid #236d21;
+      background: #5fc35d;
+      color: white;
+      padding: 0.25em 0.5em;
+      border-radius: 0.25em;
+      cursor: pointer;
     }
 
     #announcements {
@@ -197,9 +221,13 @@
                       v-model="myText"
                       v-on:input="updateText($event)"
                       v-bind:style="{ color: myColor }"></textarea>
-            <div class="line"
-                 v-else-if="line.text !== '\n'"
-                 v-bind:style="{ color: line.color }">{{ line.text }}</div>
+            <div class="line-container" v-else-if="line.text !== '\n'">
+              <div class="line"
+                   v-bind:style="{ color: line.color }">{{ line.text }}</div>
+              <div>
+                <button class="upvote-button">&uarr;</button>
+              </div>
+            </div>
           </template>
         </div>
 
