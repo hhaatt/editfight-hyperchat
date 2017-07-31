@@ -169,6 +169,8 @@
                  v-on:click.prevent="startChatting()">a textbox</a> at the bottom.</li>
             <li>Everyone can see you typing live.</li>
             <li>You can see them typing too.</li>
+            <li>Lines are limited to {{charLimit}} characters.</li>
+            <li>Refresh to get a new color if you want.</li>
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
           </ol>
@@ -227,6 +229,7 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        charLimit: 'n',
         count: 0,
         connected: false,
         myColor: 'black',
@@ -242,7 +245,7 @@
         },
 
         updateText() {
-          // app.myText = app.myText.replace(/[\r\n]/, '')
+          app.myText = app.myText.substring(0, app.charLimit)
           send({ text: app.myText })
           const textbox = app.$refs['myTextbox'][0]
           resize(textbox)
@@ -274,6 +277,10 @@
     }
 
     const commands = {
+
+      charLimit(limit) {
+        app.charLimit = limit
+      },
 
       hash(hash) {
         app.myColor = colorForHash(hash)

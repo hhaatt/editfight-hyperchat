@@ -9,6 +9,7 @@ const config = {
   port: 4000,
   origin: process.env.NODE_ORIGIN,
   pruneInterval: 30,
+  charLimit: 1000,
 }
 
 process.title = 'editfight-lines'
@@ -40,6 +41,7 @@ server.onopen = (ws) => {
     initial: lines,
     hash: ws.hash,
     uuid: ws.uuid,
+    charLimit: config.charLimit,
   })
 
   const line = {
@@ -70,7 +72,7 @@ server.commands = {
   },
 
   text(ws, text) {
-    text = text.substring(0, 256)
+    text = text.substring(0, config.charLimit)
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
   }
