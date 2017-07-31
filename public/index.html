@@ -286,7 +286,9 @@
         },
 
         updateText() {
-          app.myText = app.myText.substring(0, app.charLimit)
+          app.myText = app.myText
+            .substring(0, app.charLimit)
+            .replace(/[\r\n]/g, ' ')
           send({ text: app.myText })
           const textbox = app.$refs['myTextbox'][0]
           resize(textbox)
