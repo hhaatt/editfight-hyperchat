@@ -13,6 +13,7 @@ const config = {
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
+  voteDelay: 30,
 }
 
 process.title = 'editfight-lines'
@@ -85,6 +86,11 @@ server.commands = {
   },
 
   upvote(ws, uuid) {
+    const now = (new Date()).getTime()
+    if (ws.upvotedLast && now - ws.upvotedLast < (config.voteDelay * 1000))
+      return
+    ws.upvotedLast = now
+
     const i = lines.findIndex((line) => line.uuid === uuid)
     if (i > 0) {
       moveUp(i)
