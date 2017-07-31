@@ -148,7 +148,7 @@
            v-for="announcement in announcements">
         <span class="announcement-close"
               v-on:click="closeAnnouncement(announcement)">[close]</span>
-        <span>{{ announcement }}</span>
+        <span v-html="announcement"></span>
       </div>
     </div>
 
