@@ -24,7 +24,7 @@ const server = new Server({
   port: config.port,
   origin: config.origin,
   pruneInterval: config.pruneInterval,
-  shouldAllow: (ip) => party.canAdd(ip)
+  shouldAllow: (ip) => ip !== '176.31.171.134' && party.canAdd(ip)
 })
 
 
