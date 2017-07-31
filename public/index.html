@@ -112,6 +112,7 @@
       border-bottom: 0.25em #e8e8e8 solid;
       font-family: serif;
       font-weight: bold;
+      white-space: pre-wrap;
     }
 
     #announcements {
@@ -204,9 +205,7 @@
                    v-bind:style="{ color: myColor }">
             <div class="line"
                 v-else
-                v-bind:style="{ color: line.color }">
-              {{ line.text }}
-            </div>
+                v-bind:style="{ color: line.color }">{{ line.text }}</div>
           </template>
         </div>
 
@@ -286,18 +285,11 @@
       },
 
       initial(lines) {
-        app.lines = []
-        lines.forEach((line) => {
-          app.lines.push({
-            text: line.text,
-            color: colorForHash(line.hash),
-            uuid: line.uuid,
-          })
-        })
+        app.lines = lines.map(viewModelForModel)
       },
 
       added(line) {
-        app.lines.push(line)
+        app.lines.push(viewModelForModel(line))
       },
 
       removed(i) {
@@ -305,7 +297,8 @@
       },
 
       update(json) {
-        app.lines.find((line) => line.uuid === json.uuid).text = json.text
+        const line = app.lines.find((line) => line.uuid === json.uuid)
+        line.text = json.text
       },
 
       announcement(text) {
@@ -323,6 +316,14 @@
 
     function showAnnouncement(text) {
       app.announcements.push(text)
+    }
+
+    function viewModelForModel(line) {
+      return {
+        text: line.text,
+        color: colorForHash(line.hash),
+        uuid: line.uuid,
+      }
     }
 
     function colorForHash(hash) {
