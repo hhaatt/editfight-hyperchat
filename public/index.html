@@ -169,7 +169,10 @@
                  v-on:click.prevent="startChatting()">a textbox</a> at the bottom.</li>
             <li>Everyone can see you typing live.</li>
             <li>You can see them typing too.</li>
+            <li>Write your feature requests <a target="_blank"
+                 href="http://editfight.com/#chat">here</a>.</li>
           </ol>
+          <p>There are <b>{{count}}</b> people here.</p>
         </section>
       </div>
     </div>
@@ -212,7 +215,7 @@
       throw new Error('No websocket support.')
     }
 
-    const connection = new WebSocket(`ws://${location.host}:4000`)
+    const connection = new WebSocket(`ws://${location.host}/app`)
 
     Vue.directive('focus', {
       inserted(el) {
@@ -224,6 +227,7 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        count: 0,
         connected: false,
         myColor: 'black',
         myText: '',
@@ -281,14 +285,17 @@
 
       initial(lines) {
         app.lines = lines.map(viewModelForModel)
+        app.count = app.lines.length
       },
 
       added(line) {
         app.lines.push(viewModelForModel(line))
+        app.count++
       },
 
       removed(i) {
         app.lines.splice(i, 1)
+        app.count--
       },
 
       update(json) {
