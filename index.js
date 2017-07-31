@@ -12,7 +12,7 @@ const config = {
   charLimit: 1000,
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
-  differenceThreshold: 20,
+  differenceThreshold: 30,
 }
 
 process.title = 'editfight-lines'
@@ -81,19 +81,19 @@ server.commands = {
   text(ws, text) {
     text = text.substring(0, config.charLimit)
 
-    const oldLen = ws.line.text.length
-    const newLen = text.length
+    // const oldLen = ws.line.text.length
+    // const newLen = text.length
 
-    console.log(oldLen, newLen, ws.terminate)
+    // console.log(oldLen, newLen, ws.terminate)
 
-    if (newLen > 0 && Math.abs(oldLen - newLen) > config.differenceThreshold) {
-      maybeBan[ws.ip] = (maybeBan[ws.ip] || 0) + 1
-      if (maybeBan >= 3) {
-        banned.push(ws.ip)
-      }
-      ws.terminate()
-      return
-    }
+    // if (newLen > 0 && oldLen - newLen > config.differenceThreshold) {
+    //   maybeBan[ws.ip] = (maybeBan[ws.ip] || 0) + 1
+    //   if (maybeBan >= 3) {
+    //     banned.push(ws.ip)
+    //   }
+    //   ws.terminate()
+    //   return
+    // }
 
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
@@ -126,7 +126,16 @@ server.commands = {
     for (let i = oldIndex; i > 0; i--) {
       moveUp(i)
     }
-  }
+  },
+
+  ban(ws, uuid) {
+    server.wss.clients.forEach((ws) => {
+      if (ws.uuid === uuid) {
+        banned.push(ws.ip)
+        ws.terminate()
+      }
+    })
+  },
 
 }
 
