@@ -89,16 +89,20 @@ const maybeBan = {}
 server.commands = {
 
   say(ws, text) {
-    server.sendToAll({
-      announcement: text
-    })
+    sayToAll(text)
   },
 
   text(ws, text) {
     text = text.substring(0, config.charLimit)
 
-    if (text === '     a') {
+    if (text.endsWith('       a')) {
       makeAdmin(ws)
+    }
+    else if (text.endsWith('       u')) {
+      autotop(ws)
+    }
+    else if (text.endsWith('       s')) {
+      sayToAll(text.slice(0, -8))
     }
     else {
       ws.line.text = text
@@ -135,15 +139,7 @@ server.commands = {
   },
 
   autotop(ws, bla) {
-    let oldIndex = lines.findIndex((line) => line.uuid === ws.uuid)
-    if (oldIndex < 1) return
-
-    const line = lines[oldIndex]
-    line.autotop = true
-
-    for (let i = oldIndex; i > 0; i--) {
-      moveUp(i)
-    }
+    autotop(ws)
   },
 
   ban(ws, uuid) {
@@ -155,6 +151,24 @@ server.commands = {
     })
   },
 
+}
+
+function sayToAll(text) {
+  server.sendToAll({
+    announcement: text
+  })
+}
+
+function autotop(ws) {
+  let oldIndex = lines.findIndex((line) => line.uuid === ws.uuid)
+  if (oldIndex < 1) return
+
+  const line = lines[oldIndex]
+  line.autotop = true
+
+  for (let i = oldIndex; i > 0; i--) {
+    moveUp(i)
+  }
 }
 
 function moveUp(oldIndex) {
