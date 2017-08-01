@@ -123,6 +123,11 @@
       overflow: scroll;
     }
 
+    .line.admin {
+      background-color: #fffedd;
+      border-color: #E2E1B9 !important;
+    }
+
     .upvote-button {
       margin-left: 1em;
       outline: none;
@@ -197,11 +202,11 @@
           <ol>
             <li>You get <a href="#"
                  v-on:click.prevent="startChatting()">a textbox</a> at the bottom.</li>
-            <li>Everyone can see you typing live.</li>
-            <li>You can see them typing too.</li>
+            <li>Everyone can see everyone typing live.</li>
             <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
-            <li>You can vote a box to move them up.</li>
-            <li>Refresh to get a new color if you want.</li>
+            <li>You can vote a box to move it up one spot.</li>
+            <li>Refresh to get a new color if your sucks.</li>
+            <li>The admin is the guy with the yellow textbox.</li>
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
           </ol>
@@ -230,6 +235,7 @@
                           autocapitalize="none"
                           v-model="myText"
                           v-on:input="updateText($event)"
+                          v-bind:class="line.specialClass"
                           v-bind:style="{ color: myColor }"></textarea>
                 <div>
                   <button class="upvote-button" disabled>{{ line.upvotes }}</button>
@@ -239,6 +245,7 @@
             <template v-else-if="line.text !== '\n'">
               <div div class="line-container">
                 <div class="line"
+                     v-bind:class="line.specialClass"
                      v-bind:style="{ color: line.color }">{{ line.text }}</div>
                 <div>
                   <button class="upvote-button" v-bind:disabled="!canVote" v-on:click.prevent="upvote(line.uuid)">{{ line.upvotes }}&nbsp;&uarr;</button>
@@ -347,6 +354,10 @@
         app.uuid = uuid
       },
 
+      admin(i) {
+        app.lines[i].specialClass = { admin: true }
+      },
+
       initial(lines) {
         app.lines = lines.map(viewModelForModel)
         app.count = app.lines.length
@@ -408,6 +419,7 @@
         color: colorForHash(line.hash),
         uuid: line.uuid,
         upvotes: line.upvotes,
+        specialClass: { admin: line.admin },
       }
     }
 

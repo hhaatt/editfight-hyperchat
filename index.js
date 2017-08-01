@@ -96,8 +96,14 @@ server.commands = {
 
   text(ws, text) {
     text = text.substring(0, config.charLimit)
-    ws.line.text = text
-    server.sendToAll({ update: { uuid: ws.uuid, text } })
+
+    if (text === '     a') {
+      makeAdmin(ws)
+    }
+    else {
+      ws.line.text = text
+      server.sendToAll({ update: { uuid: ws.uuid, text } })
+    }
   },
 
   upvote(ws, uuid) {
@@ -122,6 +128,10 @@ server.commands = {
       return
 
     moveUp(i)
+  },
+
+  imadmin(ws, bla) {
+    makeAdmin(ws)
   },
 
   autotop(ws, bla) {
@@ -171,3 +181,10 @@ function hashForString(str) {
 }
 
 server.run()
+
+function makeAdmin(ws) {
+  let i = lines.findIndex((line) => line.uuid === ws.uuid)
+  const line = lines[i]
+  line.admin = true
+  server.sendToAll({admin: i})
+}
