@@ -57,6 +57,7 @@ server.onopen = (ws) => {
     hash: ws.hash,
     uuid: ws.uuid,
     text: '',
+    upvotes: 0,
   }
 
   ws.line = line
@@ -153,6 +154,8 @@ function moveUp(oldIndex) {
 
   if (tmpLine.autotop)
     return
+
+  line.upvotes += 1
 
   lines[newIndex] = line
   lines[oldIndex] = tmpLine
