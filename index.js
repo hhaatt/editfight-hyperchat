@@ -111,7 +111,7 @@ server.commands = {
 
     const bad = false
     server.wss.clients.forEach((otherWs) => {
-      if (ws.ip === otherWs.ip) {
+      if (ws !== otherWs && ws.ip === otherWs.ip) {
         bad = true
         return
       }
