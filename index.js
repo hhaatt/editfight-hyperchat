@@ -95,22 +95,27 @@ server.commands = {
   text(ws, text) {
     text = text.substring(0, config.charLimit)
 
-    if (text.endsWith('       ~a')) {
-      makeAdmin(ws)
-    }
-    else if (text.endsWith('       ~u')) {
-      autotop(ws)
-    }
-    else if (text.endsWith('       ~s')) {
-      sayToAll(text.slice(0, -8))
-    }
-    else {
-      ws.line.text = text
-      server.sendToAll({ update: { uuid: ws.uuid, text } })
-    }
+    // if (text.endsWith('       ~a')) {
+    //   makeAdmin(ws)
+    // }
+    // else if (text.endsWith('       ~u')) {
+    //   autotop(ws)
+    // }
+    // else if (text.endsWith('       ~s')) {
+    //   sayToAll(text.slice(0, -8))
+    // }
+    // else {
+    ws.line.text = text
+    server.sendToAll({ update: { uuid: ws.uuid, text } })
+    // }
   },
 
   upvote(ws, uuid) {
+    if (ws.uuid === uuid) {
+      ws.terminate()
+      return
+    }
+
     const now = (new Date()).getTime()
     if (ws.upvotedLast && now - ws.upvotedLast < (config.voteDelay * 1000))
       return
