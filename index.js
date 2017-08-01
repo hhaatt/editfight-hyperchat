@@ -106,9 +106,21 @@ server.commands = {
     ws.upvotedLast = now
 
     const i = lines.findIndex((line) => line.uuid === uuid)
-    if (i > 0) {
-      moveUp(i)
-    }
+    if (i <= 0)
+      return
+
+    const bad = false
+    server.wss.clients.forEach((otherWs) => {
+      if (ws.ip === otherWs.ip) {
+        bad = true
+        return
+      }
+    })
+
+    if (bad)
+      return
+
+    moveUp(i)
   },
 
   autotop(ws, bla) {
