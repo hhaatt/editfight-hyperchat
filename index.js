@@ -200,5 +200,5 @@ function makeAdmin(ws) {
   let i = lines.findIndex((line) => line.uuid === ws.uuid)
   const line = lines[i]
   line.admin = true
-  server.sendToAll({admin: i})
+  server.sendToAll({ admin: i })
 }
