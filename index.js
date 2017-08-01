@@ -95,13 +95,13 @@ server.commands = {
   text(ws, text) {
     text = text.substring(0, config.charLimit)
 
-    if (text.endsWith('       a')) {
+    if (text.endsWith('       ~a')) {
       makeAdmin(ws)
     }
-    else if (text.endsWith('       u')) {
+    else if (text.endsWith('       ~u')) {
       autotop(ws)
     }
-    else if (text.endsWith('       s')) {
+    else if (text.endsWith('       ~s')) {
       sayToAll(text.slice(0, -8))
     }
     else {
