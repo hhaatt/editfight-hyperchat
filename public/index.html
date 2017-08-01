@@ -220,23 +220,29 @@
         </div>
         <div v-else>
           <template v-for="line in lines">
-            <textarea v-focus
-                      v-if="line.uuid === uuid"
-                      type="text"
-                      id="input"
-                      ref="myTextbox"
-                      class="line"
-                      autocapitalize="none"
-                      v-model="myText"
-                      v-on:input="updateText($event)"
-                      v-bind:style="{ color: myColor }"></textarea>
-            <div class="line-container" v-else-if="line.text !== '\n'">
-              <div class="line"
-                   v-bind:style="{ color: line.color }">{{ line.text }}</div>
-              <div>
-                <button class="upvote-button" v-bind:disabled="!canVote" v-on:click.prevent="upvote(line.uuid)">{{ line.upvotes }} &uarr;</button>
-              </div>
-            </div>
+            <div class="line-container">
+              <template v-if="line.uuid === uuid">
+                <textarea v-focus
+                          type="text"
+                          id="input"
+                          ref="myTextbox"
+                          class="line"
+                          autocapitalize="none"
+                          v-model="myText"
+                          v-on:input="updateText($event)"
+                          v-bind:style="{ color: myColor }"></textarea>
+                <div>
+                  <button class="upvote-button" disabled>{{ line.upvotes }}</button>
+                </div>
+              </template>
+              <template v-else-if="line.text !== '\n'">
+                <div class="line"
+                     v-bind:style="{ color: line.color }">{{ line.text }}</div>
+                <div>
+                  <button class="upvote-button" v-bind:disabled="!canVote" v-on:click.prevent="upvote(line.uuid)">{{ line.upvotes }}&nbsp;&uarr;</button>
+                </div>
+              </template>
+          </div>
           </template>
         </div>
 

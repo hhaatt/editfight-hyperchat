@@ -13,7 +13,7 @@ const config = {
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
-  voteDelay: 30,
+  voteDelay: 15,
 }
 
 process.title = 'editfight-lines'
