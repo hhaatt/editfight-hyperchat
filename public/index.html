@@ -16,7 +16,9 @@
       color: #555;
     }
 
-    *, *:before, *:after {
+    *,
+    *:before,
+    *:after {
       box-sizing: inherit;
       font-size: inherit;
       font-family: inherit;
@@ -26,7 +28,16 @@
       padding: 0;
     }
 
-    h1, h2, h3, h4, h5, h6, p, ul, ol, li {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    ul,
+    ol,
+    li {
       margin: 1em 0;
     }
 
@@ -76,7 +87,8 @@
       text-decoration: none;
     }
 
-    #tabbar, #tabbar li {
+    #tabbar,
+    #tabbar li {
       margin: 0;
     }
 
@@ -104,11 +116,11 @@
       display: flex;
     }
 
-    .line-container > *:first-child {
+    .line-container>*:first-child {
       flex: 1 0;
     }
 
-    .line-container > *:last-child {
+    .line-container>*:last-child {
       flex: 0 1;
     }
 
@@ -226,7 +238,8 @@
         <div v-else>
           <template v-for="line in lines">
             <template v-if="line.uuid === uuid">
-              <div div class="line-container">
+              <div div
+                   class="line-container">
                 <textarea v-focus
                           type="text"
                           id="input"
@@ -238,17 +251,21 @@
                           v-bind:class="line.specialClass"
                           v-bind:style="{ color: myColor }"></textarea>
                 <div>
-                  <button class="upvote-button" disabled>{{ line.upvotes }}</button>
+                  <button class="upvote-button"
+                          disabled>{{ line.upvotes }}</button>
                 </div>
               </div>
             </template>
             <template v-else-if="line.text !== '\n'">
-              <div div class="line-container">
+              <div div
+                   class="line-container">
                 <div class="line"
                      v-bind:class="line.specialClass"
                      v-bind:style="{ color: line.color }">{{ line.text }}</div>
                 <div>
-                  <button class="upvote-button" v-bind:disabled="!canVote" v-on:click.prevent="upvote(line.uuid)">{{ line.upvotes }}&nbsp;&uarr;</button>
+                  <button class="upvote-button"
+                          v-bind:disabled="!canVote"
+                          v-on:click.prevent="upvote(line.uuid)">{{ line.upvotes }}&nbsp;&uarr;</button>
                 </div>
               </div>
             </template>
@@ -314,7 +331,7 @@
         upvote(uuid) {
           send({ upvote: uuid })
           app.canVote = false
-          setTimeout(function() {
+          setTimeout(function () {
             app.canVote = true
           }, 30000);
         }
