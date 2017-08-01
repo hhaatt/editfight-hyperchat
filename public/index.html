@@ -220,7 +220,7 @@
         </div>
         <div v-else>
           <template v-for="line in lines">
-            <div class="line-container">
+            <div class="line-container" v-if="line.uuid === uuid || line.text !== '\n'">
               <template v-if="line.uuid === uuid">
                 <textarea v-focus
                           type="text"
