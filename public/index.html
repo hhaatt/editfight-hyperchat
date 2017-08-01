@@ -205,7 +205,7 @@
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
           </ol>
-          <p>There are <b>{{count}}</b> people here.</p>
+          <p>There are <b>{{count}}</b> people here (<b>{{lurkers}}</b> lurkers).</p>
           <p><b>Note:</b> Also check out my <a href='http://editfight.com'
                target='_blank'>multiplayer story telling game</a>.</p>
         </section>
@@ -267,6 +267,7 @@
       el: '#vue-app',
       data: {
         canVote: true,
+        lurkers: 'n',
         charLimit: 'n',
         count: 0,
         connected: false,
@@ -341,21 +342,25 @@
       initial(lines) {
         app.lines = lines.map(viewModelForModel)
         app.count = app.lines.length
+        updateLurkers()
       },
 
       added(line) {
         app.lines.push(viewModelForModel(line))
-        app.count++
+        app.count += 1
+        app.lurkers += 1
       },
 
       removed(i) {
         app.lines.splice(i, 1)
-        app.count--
+        app.count -= 1
+        updateLurkers()
       },
 
       update(json) {
         const line = app.lines.find((line) => line.uuid === json.uuid)
         line.text = normalizeText(json.text)
+        updateLurkers()
       },
 
       announcement(text) {
@@ -409,6 +414,10 @@
     function resize(textbox) {
       textbox.style.height = "1px";
       textbox.style.height = (textbox.scrollHeight + 4) + "px";
+    }
+
+    function updateLurkers() {
+      app.lurkers = app.lines.filter((line) => line.text === '\n').length
     }
   </script>
 </body>
