@@ -187,6 +187,34 @@
     .indented {
       margin-left: 2ch;
     }
+
+    #powers-section {
+      font-family: monospace;
+      margin-top: 3em;
+    }
+
+    #powers {
+      display: block;
+      width: 100%;
+      border: 0;
+      border-bottom: 4px solid #496cad;
+      outline: none;
+      -webkit-appearance: none;
+      resize: none;
+      font-family: inherit;
+    }
+
+    #powers::-ms-placeholder {
+      color: #ccc;
+    }
+
+    #powers::placeholder {
+      color: #ccc;
+    }
+
+    #powers-section li {
+      list-style-type: none;
+    }
   </style>
 </head>
 
@@ -292,12 +320,33 @@
         </div>
 
       </section>
+
+      <section class="column"
+               id="powers-section"
+               v-if="powers">
+        <h2>You have activated Command Line</h2>
+        <input type="text"
+               id="powers"
+               placeholder="Command Line"
+               class="line"
+               v-model="myCommand"
+               v-on:keyup.13="tryCommand">
+        <ul>
+          <li>/color [CSS color code]</li>
+          <li>More coming soon.</li>
+        </ul>
+      </section>
     </main>
 
   </div>
 
   <script>
     "use strict";
+
+    if (window.location.hostname !== 'chattymcchatface.editfight.com' && window.location.hostname !== 'localhost') {
+      window.location.href = 'http://chattymcchatface.editfight.com/';
+      throw new Error('Redirecting.');
+    }
 
     window.WebSocket = window.WebSocket || window.MozWebSocket
     if (!window.WebSocket) {
@@ -328,6 +377,8 @@
         myText: '',
         lines: [],
         announcements: [],
+        powers: false,
+        myCommand: '',
       },
       methods: {
 
@@ -337,6 +388,10 @@
         },
 
         updateText() {
+          if (app.myText === 'POWER OVERWHELMING') {
+            app.powers = true
+          }
+
           app.myText = app.myText
             .substring(0, app.charLimit)
             .replace(/[\r\n]/g, ' ')
@@ -355,10 +410,31 @@
           setTimeout(function () {
             app.canVote = true
           }, 30000);
-        }
+        },
+
+        tryCommand() {
+          if (!app.myCommand.startsWith('/')) return
+          const cmdParts = app.myCommand.substring(1).trim().split(/\s/g)
+          if (cmdParts.length === 0) return
+          const cmd = userCommands[cmdParts[0]]
+          if (cmd)
+            cmd(...cmdParts.slice(1))
+          else
+            send({ unknownCommand: cmdParts })
+          app.myCommand = ''
+        },
 
       }
     })
+
+    var userCommands = {
+
+      color(color) {
+        if (!color) return
+        send({ color: color })
+      },
+
+    }
 
     connection.onopen = () => {
       app.connected = true
@@ -394,6 +470,16 @@
 
       admin(i) {
         app.lines[i].specialClass = { admin: true }
+      },
+
+      color(json) {
+        if (json.uuid === app.uuid) {
+          app.myColor = json.color
+        }
+        else {
+          const line = app.lines.find((line) => line.uuid === json.uuid)
+          line.color = json.color
+        }
       },
 
       initial(lines) {
@@ -454,7 +540,7 @@
     function viewModelForModel(line) {
       return {
         text: normalizeText(line.text),
-        color: colorForHash(line.hash),
+        color: line.color ? line.color : colorForHash(line.hash),
         uuid: line.uuid,
         upvotes: line.upvotes,
         specialClass: { admin: line.admin },

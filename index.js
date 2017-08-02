@@ -86,28 +86,56 @@ server.onclose = (ws) => {
 
 const maybeBan = {}
 
+const userCommands = {
+
+  imadmin(ws) {
+    makeAdmin(ws)
+  },
+
+  autotop(ws) {
+    autotop(ws)
+  },
+
+  say(ws, text) {
+    sayToAll(text)
+  },
+
+}
+
 server.commands = {
 
   say(ws, text) {
     sayToAll(text)
   },
 
+  unknownCommand(ws, cmdParts) {
+    log(cmdParts)
+    if (cmdParts.length === 0) return
+    const cmdName = cmdParts[0]
+    const cmd = userCommands[cmdName]
+    if (cmd) {
+      cmd(ws, ...cmdParts.slice(1))
+    }
+    else {
+      log(`Unknown User Command: ${JSON.stringify(cmd)}`)
+      // doesn't exist: maybe stop them
+    }
+  },
+
+  color(ws, color) {
+    color = color.substring(0, 7)
+    server.sendToAll({
+      color: {
+        uuid: ws.uuid,
+        color: color
+      }
+    })
+  },
+
   text(ws, text) {
     text = text.substring(0, config.charLimit)
-
-    // if (text.endsWith('       ~a')) {
-    //   makeAdmin(ws)
-    // }
-    // else if (text.endsWith('       ~u')) {
-    //   autotop(ws)
-    // }
-    // else if (text.endsWith('       ~s')) {
-    //   sayToAll(text.slice(0, -8))
-    // }
-    // else {
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
-    // }
   },
 
   upvote(ws, uuid) {
