@@ -346,10 +346,10 @@
     connection.onclose = (e) => {
       app.connected = false
       console.log('closing', e)
-      showAnnouncement('Disconnected. Auto-refreshing in 3 seconds.')
+      showAnnouncement('Disconnected. Auto-refreshing for you.')
       setTimeout(() => {
         window.location.reload(true)
-      }, 3000)
+      }, 500)
     }
 
     connection.onerror = (error) => {
