@@ -123,7 +123,7 @@ server.commands = {
   },
 
   color(ws, color) {
-    color = color.substring(0, 7)
+    color = color.substring(0, 50)
     server.sendToAll({
       color: {
         uuid: ws.uuid,
