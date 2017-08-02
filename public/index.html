@@ -190,14 +190,18 @@
 
     #powers-section {
       font-family: monospace;
-      margin-top: 3em;
+      margin: 0;
+      padding: 1em;
+      border-radius: 0.5em;
+      background: #dadada;
+      border-bottom: 4px solid #bbb;
     }
 
     #powers {
       display: block;
       width: 100%;
       border: 0;
-      border-bottom: 4px solid #496cad;
+      /* border-bottom: 4px solid #496cad; */
       outline: none;
       -webkit-appearance: none;
       resize: none;
@@ -299,9 +303,26 @@
                           v-bind:style="{ color: myColor }"></textarea>
                 <div>
                   <button class="upvote-button"
+                          v-if="powers"
                           disabled>{{ line.upvotes }}</button>
                 </div>
               </div>
+
+              <div id="powers-section"
+                   class="indented"
+                   v-if="powers">
+                <input type="text"
+                       id="powers"
+                       placeholder="Command Line"
+                       class="line"
+                       v-model="myCommand"
+                       v-on:keyup.13="tryCommand">
+                <ul>
+                  <li>/color [CSS color code]</li>
+                  <li>More coming soon.</li>
+                </ul>
+              </div>
+
             </template>
             <template v-else-if="line.text !== '\n'">
               <div div
@@ -312,29 +333,13 @@
                 <div>
                   <button class="upvote-button"
                           v-bind:disabled="!canVote"
-                          v-on:click.prevent="upvote(line.uuid)">{{ line.upvotes }}&nbsp;&uarr;</button>
+                          v-on:click.prevent="upvote(line.uuid)"><template v-if="powers">{{ line.upvotes }}&nbsp;</template>&uarr;</button>
                 </div>
               </div>
             </template>
           </template>
         </div>
 
-      </section>
-
-      <section class="column"
-               id="powers-section"
-               v-if="powers">
-        <h2>You have activated Command Line</h2>
-        <input type="text"
-               id="powers"
-               placeholder="Command Line"
-               class="line"
-               v-model="myCommand"
-               v-on:keyup.13="tryCommand">
-        <ul>
-          <li>/color [CSS color code]</li>
-          <li>More coming soon.</li>
-        </ul>
       </section>
     </main>
 
@@ -389,12 +394,13 @@
 
         updateText() {
           if (app.myText === 'POWER OVERWHELMING') {
-            app.powers = true
+            app.powers = !app.powers
+            showAnnouncement(app.powers ? "Cheat Mode: <b>Activated.</b> Type it again to toggle." : "Cheat Mode: Deactivated")
           }
 
           app.myText = app.myText
             .substring(0, app.charLimit)
-            .replace(/[\r\n]/g, ' ')
+
           send({ text: app.myText })
           const textbox = app.$refs['myTextbox'][0]
           resize(textbox)
@@ -534,7 +540,7 @@
     }
 
     function normalizeText(text) {
-      return (text.replace(/[\r\n]/g, ' ') || '\n')
+      return (text || '\n')
     }
 
     function viewModelForModel(line) {

@@ -9,7 +9,7 @@ const config = {
   port: 4000,
   origin: process.env.NODE_ORIGIN,
   pruneInterval: 30,
-  charLimit: 256,
+  charLimit: 1000,
   allowedUpvoteTimes: 3,
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
@@ -124,6 +124,7 @@ server.commands = {
 
   color(ws, color) {
     color = color.substring(0, 50)
+    ws.line.color = color
     server.sendToAll({
       color: {
         uuid: ws.uuid,

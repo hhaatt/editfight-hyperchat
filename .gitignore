@@ -1,2 +1,5 @@
 node_modules/
 data/
+
+/access.log.1
+/tmp.html
