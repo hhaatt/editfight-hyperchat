@@ -183,6 +183,10 @@
       margin-bottom: 1em;
       text-decoration: underline;
     }
+
+    .indented {
+      margin-left: 2ch;
+    }
   </style>
 </head>
 
@@ -203,7 +207,7 @@
       <header>
         <section class="column">
           <h1>
-            <a href="/">lines.editfight.com</a>
+            <a href="/">ChattyMcChatFace . EditFight . com</a>
           </h1>
         </section>
       </header>
@@ -211,7 +215,22 @@
       <div id="subhead">
         <section class="column">
           <h2>Hyper-real-time chat.</h2>
-          <ol>
+          <p>&lambda; <a href="#"
+               v-on:click.prevent="startChatting">Go to your textbox.</a></p>
+          <p><span v-html="showInstructions ? '&minus;' : '&plus;'"></span> <a href="#"
+               v-on:click.prevent="showInstructions = !showInstructions">Instruction manual.</a></p>
+          <ol class="indented"
+              v-if="showInstructions">
+            <li>Your textbox starts at the bottom.</li>
+            <li>Everyone can see everyone typing live.</li>
+            <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
+            <li>You can move someone up one spot every 15 seconds.</li>
+            <!-- <li>You can move yourself down one spot every 15 seconds.</li> -->
+          </ol>
+          <!-- <p><span v-html="showDonateLink ? '&minus;' : '&plus;'"></span> <a href="#"
+               v-on:click.prevent="showDonateLink = !showDonateLink">Show admin your love.</a></p>
+          <ol class="indented"
+              v-if="showDonateLink">
             <li>You get <a href="#"
                  v-on:click.prevent="startChatting()">a textbox</a> at the bottom.</li>
             <li>Everyone can see everyone typing live.</li>
@@ -221,10 +240,10 @@
             <li>The admin is the guy with the yellow textbox.</li>
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
-          </ol>
-          <p>There are <b>{{count}}</b> people here (<b>{{count - lurkers}}</b> have typed stuff).</p>
-          <p><b>Note:</b> Also check out my <a href='http://editfight.com'
-               target='_blank'>multiplayer story telling game</a>.</p>
+          </ol> -->
+          <p><b>{{count - lurkers}}</b> active; <b>{{lurkers}}</b> lurkers</p>
+          <!-- <p><b>Note:</b> Also check out my <a href='http://editfight.com'
+               target='_blank'>multiplayer story telling game</a>.</p> -->
         </section>
       </div>
     </div>
@@ -298,6 +317,8 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        showInstructions: false,
+        showDonateLink: false,
         canVote: true,
         lurkers: 'n',
         charLimit: 'n',
