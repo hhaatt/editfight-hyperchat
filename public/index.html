@@ -133,8 +133,6 @@
       font-weight: bold;
       white-space: pre-wrap;
       overflow: scroll;
-      height: 2em;
-      box-sizing: content-box;
     }
 
     .line.admin {
@@ -292,6 +290,7 @@
 
     Vue.directive('focus', {
       inserted(el) {
+        resize(el)
         el.focus()
       }
     })
@@ -319,8 +318,10 @@
         updateText() {
           app.myText = app.myText
             .substring(0, app.charLimit)
+            .replace(/[\r\n]/g, ' ')
           send({ text: app.myText })
           const textbox = app.$refs['myTextbox'][0]
+          resize(textbox)
         },
 
         startChatting() {
@@ -426,7 +427,7 @@
     }
 
     function normalizeText(text) {
-      return text || '\n'
+      return (text.replace(/[\r\n]/g, ' ') || '\n')
     }
 
     function viewModelForModel(line) {
@@ -448,6 +449,11 @@
 
     function send(msg) {
       connection.send(JSON.stringify(msg))
+    }
+
+    function resize(textbox) {
+      textbox.style.height = "1px";
+      textbox.style.height = (textbox.scrollHeight + 4) + "px";
     }
 
     function updateLurkers() {
