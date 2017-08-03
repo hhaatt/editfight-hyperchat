@@ -532,8 +532,6 @@
       }
     })
 
-    app.toggleDarkMode()
-
     window.WebSocket = window.WebSocket || window.MozWebSocket
     if (!window.WebSocket) {
       app.status = "Your browser doesn't support this website.\n\nPlease let me know what browser it is because I thought all browsers supported websockets at this point."
@@ -678,8 +676,8 @@
 
     function colorForHash(hash) {
       const hue = hash % 360
-      const sat = Math.abs(hash) % 70 + 30
-      const light = Math.abs(hash) % 30 + 20
+      const sat = Math.abs(hash) % 30 + 5
+      const light = Math.abs(hash) % 20 + 40
       return `hsl(${hue}, ${sat}%, ${light}%)`
     }
 
