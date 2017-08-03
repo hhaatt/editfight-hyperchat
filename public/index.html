@@ -330,9 +330,9 @@
         <section class="column">
           <h2>Hyper-real-time chat.</h2>
           <p>&lambda; <a href="#"
-               v-on:click.prevent="startChatting">Go to your textbox.</a></p>
+               v-on:click.prevent="startChatting">Open your textbox.</a></p>
           <p><span v-html="showInstructions ? '&minus;' : '&plus;'"></span> <a href="#"
-               v-on:click.prevent="showInstructions = !showInstructions">Instruction manual.</a></p>
+               v-on:click.prevent="showInstructions = !showInstructions">Instruction manual; v2.</a></p>
           <ol class="indented"
               v-if="showInstructions">
             <li>Your textbox starts at the bottom.</li>
@@ -340,7 +340,6 @@
             <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
             <li>You can upvote someone every <b>{{upvoteLimit}}</b> seconds.</li>
             <li>There's an idle-timeout of <b>{{idleKickMinutes}} &times; $votes</b> minutes.</li>
-            <!-- <li>You can move yourself down one spot every 15 seconds.</li> -->
           </ol>
 
           <p>&gt; <a href="#"
@@ -348,23 +347,7 @@
           <p>&rarr; <a target="_blank"
                href="http://editfight.com/#chat">Send me feedback.</a></p>
 
-          <!-- <p><span v-html="showDonateLink ? '&minus;' : '&plus;'"></span> <a href="#"
-               v-on:click.prevent="showDonateLink = !showDonateLink">Show admin your love.</a></p>
-          <ol class="indented"
-              v-if="showDonateLink">
-            <li>You get <a href="#"
-                 v-on:click.prevent="startChatting()">a textbox</a> at the bottom.</li>
-            <li>Everyone can see everyone typing live.</li>
-            <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
-            <li>You can vote a box to move it up one spot.</li>
-            <li>Refresh to get a new color if your sucks.</li>
-            <li>The admin is the guy with the yellow textbox.</li>
-            <li>Write your feature requests <a target="_blank"
-                 href="http://editfight.com/#chat">here</a>.</li>
-          </ol> -->
           <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            lurkers</p>
-          <!-- <p><b>Note:</b> Also check out my <a href='http://editfight.com'
-               target='_blank'>multiplayer story telling game</a>.</p> -->
         </section>
       </div>
     </div>
@@ -452,7 +435,6 @@
         showNumbers: false,
         darkMode: false,
         showInstructions: false,
-        showDonateLink: false,
         canVote: true,
         lurkers: 'n',
         charLimit: 'n',
