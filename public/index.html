@@ -8,12 +8,15 @@
         name="viewport">
   <script src="//unpkg.com/vue/dist/vue.min.js"></script>
   <style>
-    html {
+    html,
+    body {
       box-sizing: border-box;
       font-size: 16px;
       font-family: sans-serif;
       background-color: #f0f0f0;
       color: #555;
+      height: 100%;
+      min-height: 100%;
     }
 
     *,
@@ -98,7 +101,7 @@
     }
 
     main {
-      margin: 2em 0;
+      padding: 2em 0;
     }
 
     #input {
@@ -133,6 +136,7 @@
       font-weight: bold;
       white-space: pre-wrap;
       overflow: hidden;
+      max-height: 15em;
     }
 
     .line.admin {
@@ -219,6 +223,83 @@
     #powers-section li {
       list-style-type: none;
     }
+
+
+
+
+    body.dark {
+      height: 100%;
+      background: #3c3c3c;
+      color: #ccc;
+    }
+
+    body.dark #subhead {
+      background-color: #2b2b2b;
+    }
+
+    body.dark a {
+      color: #ffe1b1;
+    }
+
+    body.dark a:visited {
+      color: #cba6f1;
+    }
+
+    body.dark a:hover {
+      color: #a6f1c9;
+    }
+
+    body.dark .line {
+      background-color: #5a5a5a;
+      border-bottom-color: #757575;
+    }
+
+    body.dark #input {
+      border-bottom-color: #270e0e;
+    }
+
+
+
+
+
+    body.dark .line.admin {
+      background-color: #75745b;
+      border-color: #5f5e48 !important;
+    }
+
+    body.dark .upvote-button {
+      border-color: #0d500c;
+      background: #2a6329;
+      color: white;
+    }
+
+    body.dark .upvote-button:disabled {
+      background: #7b7a7a;
+      border-bottom-color: #585858;
+    }
+
+    body.dark .announcement {
+      background: #98986e;
+      color: #333;
+      border-color: transparent;
+    }
+
+    body.dark .announcement-close {
+      color: #7b0909;
+    }
+
+    body.dark #powers-section {
+      background: #2b2727;
+      border-color: #151010;
+    }
+
+    body.dark #powers::-ms-placeholder {
+      color: #ccc;
+    }
+
+    body.dark #powers::placeholder {
+      color: #ccc;
+    }
   </style>
 </head>
 
@@ -260,6 +341,10 @@
             <li>There's an idle-timeout of 7 &times; Votes minutes.</li>
             <!-- <li>You can move yourself down one spot every 15 seconds.</li> -->
           </ol>
+
+          <p>&gt; <a href="#"
+               v-on:click.prevent="toggleDarkMode">{{darkMode ? "Light Mode" : "Dark Mode"}}.</a></p>
+
           <!-- <p><span v-html="showDonateLink ? '&minus;' : '&plus;'"></span> <a href="#"
                v-on:click.prevent="showDonateLink = !showDonateLink">Show admin your love.</a></p>
           <ol class="indented"
@@ -372,6 +457,7 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        darkMode: false,
         showInstructions: false,
         showDonateLink: false,
         canVote: true,
@@ -431,8 +517,15 @@
           app.myCommand = ''
         },
 
+        toggleDarkMode() {
+          app.darkMode = !app.darkMode
+          document.body.classList.toggle('dark')
+        },
+
       }
     })
+
+    app.toggleDarkMode()
 
     var userCommands = {
 
@@ -547,9 +640,9 @@
     }
 
     function colorForHash(hash) {
-      const hue = hash % 180 + 180
-      const sat = Math.abs(hash) % 50 + 30
-      const light = Math.abs(hash) % 60 + 20
+      const hue = hash % 360
+      const sat = Math.abs(hash) % 70 + 30
+      const light = Math.abs(hash) % 30 + 20
       return `hsl(${hue}, ${sat}%, ${light}%)`
     }
 
