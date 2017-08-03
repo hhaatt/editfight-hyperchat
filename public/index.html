@@ -392,6 +392,8 @@
                     <li>color &lt;css-color-code&gt;</li>
                     <li>shownumbers</li>
                     <li>hidecheatmode</li>
+                    <li>savecolor</li>
+                    <li>unsavecolor</li>
                   </ul>
                   <p>More coming soon.</p>
                 </div>
@@ -530,10 +532,15 @@
         toggleDarkMode() {
           app.darkMode = !app.darkMode
           document.documentElement.classList.toggle('dark')
+          localStorage.setItem('darkmode', app.darkMode ? '1' : '0')
         },
 
       }
     })
+
+    if (localStorage.getItem('darkmode') === '1') {
+      app.toggleDarkMode()
+    }
 
     window.WebSocket = window.WebSocket || window.MozWebSocket
     if (!window.WebSocket) {
@@ -557,6 +564,15 @@
       hidecheatmode() {
         app.powers = false
         showAnnouncement("Cheat Mode: <b>Deactivated</b>")
+      },
+
+      savecolor() {
+        if (!app.myColor) return
+        localStorage.setItem('mycolor', app.myColor)
+      },
+
+      unsavecolor() {
+        localStorage.removeItem('mycolor')
       },
 
     }
@@ -620,6 +636,13 @@
         if (line.uuid === app.uuid) {
           const i = app.lines.findIndex((line) => line.uuid === app.uuid)
           app.lines[i] = viewModelLine
+
+          const myColorMaybe = localStorage.getItem('mycolor')
+          console.log(myColorMaybe)
+          if (myColorMaybe) {
+            console.log('sending')
+            send({ color: myColorMaybe })
+          }
         }
         else {
           app.lines.push(viewModelLine)
