@@ -463,18 +463,6 @@
 
     const commands = {
 
-      charLimit(limit) {
-        app.charLimit = limit
-      },
-
-      hash(hash) {
-        app.myColor = colorForHash(hash)
-      },
-
-      uuid(uuid) {
-        app.uuid = uuid
-      },
-
       admin(i) {
         app.lines[i].specialClass = { admin: true }
       },
@@ -489,7 +477,11 @@
         }
       },
 
-      initial(lines) {
+      initial({ lines, hash, uuid, charLimit }) {
+        app.myColor = colorForHash(hash)
+        app.charLimit = charLimit
+        app.uuid = uuid
+
         app.lines = lines.map(viewModelForModel)
         app.count = app.lines.length
         updateLurkers()

@@ -48,10 +48,12 @@ server.onopen = (ws) => {
   party.add(ws.ip)
 
   server.send(ws, {
-    initial: lines,
-    hash: ws.hash,
-    uuid: ws.uuid,
-    charLimit: config.charLimit,
+    initial: {
+      lines,
+      hash: ws.hash,
+      uuid: ws.uuid,
+      charLimit: config.charLimit,
+    },
   })
 
   const line = {
