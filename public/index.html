@@ -8,8 +8,7 @@
         name="viewport">
   <script src="//unpkg.com/vue/dist/vue.min.js"></script>
   <style>
-    html,
-    body {
+    html {
       box-sizing: border-box;
       font-size: 16px;
       font-family: sans-serif;
@@ -228,78 +227,78 @@
 
 
 
-    body.dark {
+    html.dark {
       height: 100%;
       background: #3c3c3c;
       color: #ccc;
     }
 
-    body.dark #subhead {
+    html.dark #subhead {
       background-color: #2b2b2b;
     }
 
-    body.dark a {
+    html.dark a {
       color: #ffe1b1;
     }
 
-    body.dark a:visited {
+    html.dark a:visited {
       color: #cba6f1;
     }
 
-    body.dark a:hover {
+    html.dark a:hover {
       color: #a6f1c9;
     }
 
-    body.dark .line {
-      background-color: #5a5a5a;
-      border-bottom-color: #757575;
+    html.dark .line {
+      background: #2b2b2b;
+      border-color: #191919;
     }
 
-    body.dark #input {
-      border-bottom-color: #270e0e;
+    html.dark #input {
+      border-color: #270e0e;
     }
 
 
 
 
 
-    body.dark .line.admin {
+    html.dark .line.admin {
       background-color: #75745b;
       border-color: #5f5e48 !important;
     }
 
-    body.dark .upvote-button {
+    html.dark .upvote-button {
       border-color: #0d500c;
       background: #2a6329;
       color: white;
     }
 
-    body.dark .upvote-button:disabled {
-      background: #7b7a7a;
-      border-bottom-color: #585858;
+    html.dark .upvote-button:disabled {
+      background: #505050;
+      border-bottom-color: #333333;
     }
 
-    body.dark .announcement {
+    html.dark .announcement {
       background: #98986e;
       color: #333;
       border-color: transparent;
     }
 
-    body.dark .announcement-close {
+    html.dark .announcement-close {
       color: #7b0909;
     }
 
-    body.dark #powers-section {
-      background: #2b2727;
-      border-color: #151010;
+    html.dark #powers-section {
+      background: #505050;
+      border-color: #333333;
     }
 
-    body.dark #powers::-ms-placeholder {
-      color: #ccc;
+    html.dark #powers::-ms-placeholder {
+      color: #555;
     }
 
-    body.dark #powers::placeholder {
-      color: #ccc;
+    html.dark #powers::placeholder {
+      color: #555;
     }
   </style>
 </head>
@@ -527,11 +526,13 @@
 
         toggleDarkMode() {
           app.darkMode = !app.darkMode
-          document.body.classList.toggle('dark')
+          document.documentElement.classList.toggle('dark')
         },
 
       }
     })
+
+    app.toggleDarkMode()
 
     window.WebSocket = window.WebSocket || window.MozWebSocket
     if (!window.WebSocket) {
