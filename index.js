@@ -125,13 +125,15 @@ server.commands = {
   },
 
   color(ws, color) {
-    color = color.substring(0, 50)
-    ws.line.color = color
-    server.sendToAll({
-      color: {
-        uuid: ws.uuid,
-        color: color
-      }
+    rateLimit(ws, 'color', 0.25, () => {
+      color = color.substring(0, 50)
+      ws.line.color = color
+      server.sendToAll({
+        color: {
+          uuid: ws.uuid,
+          color: color
+        }
+      })
     })
   },
 
@@ -258,4 +260,19 @@ function resetKicker(ws) {
 function kick(ws) {
   log('terminating')
   ws.terminate()
+}
+
+function rateLimit(ws, name, sec, fn) {
+  ws.actions = ws.actions || {}
+  ws.actions[name] = ws.actions[name] || { count: 0, ready: true }
+  const action = ws.actions[name]
+
+  if (!action.ready)
+    return
+
+  action.count += 1
+  action.ready = false
+  const delay = sec * 1000 * action.count
+  setTimeout(() => action.ready = true, delay);
+  fn()
 }
