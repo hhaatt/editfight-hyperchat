@@ -437,7 +437,6 @@
         darkMode: false,
         showInstructions: false,
         canVote: true,
-        lurkers: 'n',
         charLimit: 'n',
         count: 0,
         connected: false,
@@ -448,6 +447,15 @@
         powers: false,
         myCommand: '',
       },
+
+      computed: {
+
+        lurkers() {
+          return this.count - this.lines.length
+        },
+
+      },
+
       methods: {
 
         closeAnnouncement(ann) {
@@ -586,43 +594,38 @@
         }
       },
 
-      initial({ idleKickMinutes, upvoteLimit, lines, hash, uuid, charLimit }) {
+      initial({ count, idleKickMinutes, upvoteLimit, lines, hash, uuid, charLimit }) {
         app.myColor = colorForHash(hash)
         app.charLimit = charLimit
         app.uuid = uuid
         app.upvoteLimit = upvoteLimit
         app.idleKickMinutes = idleKickMinutes
-
+        app.count = count
         app.lines = lines.map(viewModelForModel)
-        app.count = app.lines.length
-        updateLurkers()
       },
 
-      idler() {
+      joined() {
+        app.count += 1
+      },
 
+      left() {
+        app.count -= 1
       },
 
       added(line) {
-        if (line.uuid === app.uuid) {
-
-        }
-        else {
+        if (line.uuid !== app.uuid) {
           app.lines.push(viewModelForModel(line))
         }
-        app.count += 1
-        app.lurkers += 1
       },
 
       removed(i) {
         app.lines.splice(i, 1)
         app.count -= 1
-        updateLurkers()
       },
 
       update(json) {
         const line = app.lines.find((line) => line.uuid === json.uuid)
         line.text = normalizeText(json.text)
-        updateLurkers()
       },
 
       announcement(text) {
@@ -680,10 +683,6 @@
     function resize(textbox) {
       textbox.style.height = "1px"
       textbox.style.height = (textbox.scrollHeight + 4) + "px"
-    }
-
-    function updateLurkers() {
-      app.lurkers = app.lines.filter((line) => line.text === '\n').length
     }
   </script>
 </body>

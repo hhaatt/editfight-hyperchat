@@ -36,7 +36,6 @@ const server = new Server({
 
 
 const lines = []
-
 const lifetimes = {}
 
 
@@ -55,8 +54,11 @@ server.onopen = (ws) => {
       charLimit: config.charLimit,
       upvoteLimit: config.voteDelay,
       idleKickMinutes: config.idleKickMinutes,
+      count: server.wss.clients.size - 1,
     },
   })
+
+  server.sendToAll({ joined: true })
 }
 
 server.onclose = (ws) => {
@@ -73,9 +75,13 @@ server.onclose = (ws) => {
 
   party.remove(ws.ip)
 
-  const i = lines.indexOf(ws.line)
-  lines.splice(i, 1)
-  server.sendToAll({ removed: i })
+  if (ws.startedChatting) {
+    const i = lines.indexOf(ws.line)
+    lines.splice(i, 1)
+    server.sendToAll({ removed: i })
+  }
+
+  server.sendToAll({ left: true })
 }
 
 const maybeBan = {}
