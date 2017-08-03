@@ -479,6 +479,9 @@
         },
 
         startChatting() {
+          if (!app.connected)
+            return
+
           if (!app.startedChatting) {
             app.startedChatting = true
             send({ begin: true })
