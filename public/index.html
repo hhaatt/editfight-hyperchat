@@ -135,7 +135,7 @@
       font-family: serif;
       font-weight: bold;
       white-space: pre-wrap;
-      overflow: hidden;
+      overflow: auto;
       max-height: 15em;
     }
 
@@ -220,9 +220,6 @@
       color: #ccc;
     }
 
-    #powers-section li {
-      list-style-type: none;
-    }
 
 
 
@@ -389,13 +386,12 @@
                           v-bind:style="{ color: myColor }"></textarea>
                 <div>
                   <button class="upvote-button"
-                          v-if="powers"
+                          v-if="showNumbers"
                           disabled>{{ line.upvotes }}</button>
                 </div>
               </div>
 
               <div id="powers-section"
-                   class="indented"
                    v-if="powers">
                 <input type="text"
                        id="powers"
@@ -403,10 +399,14 @@
                        class="line"
                        v-model="myCommand"
                        v-on:keyup.13="tryCommand">
-                <ul>
-                  <li>/color [CSS color code]</li>
-                  <li>More coming soon.</li>
-                </ul>
+                <div class="indented">
+                  <ul>
+                    <li>color &lt;css-color-code&gt;</li>
+                    <li>shownumbers</li>
+                    <li>hidecheatmode</li>
+                  </ul>
+                  <p>More coming soon.</p>
+                </div>
               </div>
 
             </template>
@@ -419,7 +419,7 @@
                 <div>
                   <button class="upvote-button"
                           v-bind:disabled="!canVote"
-                          v-on:click.prevent="upvote(line.uuid)"><template v-if="powers">{{ line.upvotes }}&nbsp;</template>&uarr;</button>
+                          v-on:click.prevent="upvote(line.uuid)"><template v-if="showNumbers">{{ line.upvotes }}&nbsp;</template>&uarr;</button>
                 </div>
               </div>
             </template>
@@ -457,6 +457,7 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        showNumbers: false,
         darkMode: false,
         showInstructions: false,
         showDonateLink: false,
@@ -481,8 +482,11 @@
 
         updateText() {
           if (app.myText === 'POWER OVERWHELMING') {
-            app.powers = !app.powers
-            showAnnouncement(app.powers ? "Cheat Mode: <b>Activated.</b> Type it again to toggle." : "Cheat Mode: Deactivated")
+            if (app.powers)
+              return
+
+            app.powers = true
+            showAnnouncement("Cheat Mode: <b>Activated.</b> Type it again to toggle.")
           }
 
           app.myText = app.myText
@@ -506,14 +510,23 @@
         },
 
         tryCommand() {
-          if (!app.myCommand.startsWith('/')) return
-          const cmdParts = app.myCommand.substring(1).trim().split(/\s/g)
-          if (cmdParts.length === 0) return
-          const cmd = userCommands[cmdParts[0]]
-          if (cmd)
-            cmd(...cmdParts.slice(1))
+          if (!app.myCommand) return
+
+          let spaceLoc = app.myCommand.indexOf(' ')
+          if (spaceLoc === -1)
+            spaceLoc = app.myCommand.length
           else
-            send({ unknownCommand: cmdParts })
+            spaceLoc += 1
+
+          const name = app.myCommand.substring(0, spaceLoc).trim()
+          const args = app.myCommand.substring(spaceLoc).trim()
+          const cmd = userCommands[name]
+
+          if (cmd)
+            cmd(args)
+          else if (name)
+            send({ unknownCommand: { name: name, args } })
+
           app.myCommand = ''
         },
 
@@ -525,13 +538,22 @@
       }
     })
 
-    app.toggleDarkMode()
+    // app.toggleDarkMode()
 
     var userCommands = {
 
       color(color) {
         if (!color) return
         send({ color: color })
+      },
+
+      shownumbers() {
+        app.showNumbers = true
+      },
+
+      hidecheatmode() {
+        app.powers = false
+        showAnnouncement("Cheat Mode: Deactivated")
       },
 
     }
