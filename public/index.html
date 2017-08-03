@@ -422,8 +422,8 @@
     "use strict";
 
     if (window.location.hostname !== 'hyperchat.editfight.com' && window.location.hostname !== 'localhost') {
-      window.location.href = 'http://hyperchat.editfight.com/';
-      throw new Error('Redirecting.');
+      window.location.href = 'http://hyperchat.editfight.com/'
+      throw new Error('Redirecting.')
     }
 
     const app = new Vue({
@@ -493,7 +493,7 @@
           send({ upvote: uuid })
           app.canVote = false
           const delay = app.upvoteLimit * 1000
-          setTimeout(() => app.canVote = true, delay);
+          setTimeout(() => app.canVote = true, delay)
         },
 
         tryCommand() {
@@ -598,6 +598,10 @@
         updateLurkers()
       },
 
+      idler() {
+
+      },
+
       added(line) {
         if (line.uuid === app.uuid) {
 
@@ -674,8 +678,8 @@
     }
 
     function resize(textbox) {
-      textbox.style.height = "1px";
-      textbox.style.height = (textbox.scrollHeight + 4) + "px";
+      textbox.style.height = "1px"
+      textbox.style.height = (textbox.scrollHeight + 4) + "px"
     }
 
     function updateLurkers() {
