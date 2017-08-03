@@ -334,8 +334,8 @@
             <li>Your textbox starts at the bottom.</li>
             <li>Everyone can see everyone typing live.</li>
             <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
-            <li>You can vote someone upwards every 15 seconds.</li>
-            <li>There's an idle-timeout of 7 &times; Votes minutes.</li>
+            <li>You can upvote someone every <b>{{upvoteLimit}}</b> seconds.</li>
+            <li>There's an idle-timeout of <b>{{idleKickMinutes}} &times; $votes</b> minutes.</li>
             <!-- <li>You can move yourself down one spot every 15 seconds.</li> -->
           </ol>
 
@@ -457,6 +457,8 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        idleKickMinutes: 0,
+        upvoteLimit: 0,
         showNumbers: false,
         darkMode: false,
         showInstructions: false,
@@ -506,7 +508,7 @@
           app.canVote = false
           setTimeout(function () {
             app.canVote = true
-          }, 30000);
+          }, app.upvoteLimit * 1000);
         },
 
         tryCommand() {
@@ -592,10 +594,12 @@
         }
       },
 
-      initial({ lines, hash, uuid, charLimit }) {
+      initial({ idleKickMinutes, upvoteLimit, lines, hash, uuid, charLimit }) {
         app.myColor = colorForHash(hash)
         app.charLimit = charLimit
         app.uuid = uuid
+        app.upvoteLimit = upvoteLimit
+        app.idleKickMinutes = idleKickMinutes
 
         app.lines = lines.map(viewModelForModel)
         app.count = app.lines.length

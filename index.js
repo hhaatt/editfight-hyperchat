@@ -14,7 +14,7 @@ const config = {
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
   voteDelay: 15,
-  idleKickMinutes: 7,
+  idleKickMinutes: 77,
 }
 
 process.title = 'editfight-lines'
@@ -53,6 +53,8 @@ server.onopen = (ws) => {
       hash: ws.hash,
       uuid: ws.uuid,
       charLimit: config.charLimit,
+      upvoteLimit: config.voteDelay,
+      idleKickMinutes: config.idleKickMinutes,
     },
   })
 
