@@ -220,6 +220,10 @@
       color: #ccc;
     }
 
+    #status {
+      white-space: pre-wrap;
+    }
+
 
 
 
@@ -368,16 +372,14 @@
     <main>
       <section class="column">
 
-        <div v-if="!connected">
-          Connecting...
-        </div>
-        <div v-else>
+        <div v-if="status"
+             id="status">{{status}}</div>
+        <div v-if="connected">
           <template v-for="line in lines">
             <template v-if="line.uuid === uuid">
               <div div
                    class="line-container">
-                <textarea v-focus
-                          type="text"
+                <textarea type="text"
                           id="input"
                           ref="myTextbox"
                           class="line"
@@ -441,24 +443,10 @@
       throw new Error('Redirecting.');
     }
 
-    window.WebSocket = window.WebSocket || window.MozWebSocket
-    if (!window.WebSocket) {
-      showAnnouncement("Your browser doesn't support this website. Please let me know what browser it is because I thought all browsers supported websockets at this point.")
-      throw new Error('No websocket support.')
-    }
-
-    const connection = new WebSocket(`ws://${location.host}/app`)
-
-    Vue.directive('focus', {
-      inserted(el) {
-        resize(el)
-        el.focus()
-      }
-    })
-
     const app = new Vue({
       el: '#vue-app',
       data: {
+        status: "Connecting...",
         idleKickMinutes: 0,
         upvoteLimit: 0,
         showNumbers: false,
@@ -508,9 +496,8 @@
         upvote(uuid) {
           send({ upvote: uuid })
           app.canVote = false
-          setTimeout(function () {
-            app.canVote = true
-          }, app.upvoteLimit * 1000);
+          const delay = app.upvoteLimit * 1000
+          setTimeout(() => app.canVote = true, delay);
         },
 
         tryCommand() {
@@ -542,6 +529,21 @@
       }
     })
 
+    window.WebSocket = window.WebSocket || window.MozWebSocket
+    if (!window.WebSocket) {
+      app.status = "Your browser doesn't support this website.\n\nPlease let me know what browser it is because I thought all browsers supported websockets at this point."
+      throw new Error('No websocket support.')
+    }
+
+    var connection = new WebSocket(`ws://${location.host}/app`)
+
+    // Vue.directive('focus', {
+    //   inserted(el) {
+    //     resize(el)
+    //     el.focus()
+    //   }
+    // })
+
     // app.toggleDarkMode()
 
     var userCommands = {
@@ -564,6 +566,7 @@
 
     connection.onopen = () => {
       app.connected = true
+      app.status = null
     }
 
     connection.onclose = (e) => {
@@ -577,7 +580,7 @@
 
     connection.onerror = (error) => {
       console.log('erroring')
-      // showAnnouncement("The server is probably down. Or maybe you're offline.")
+      app.status = "The server is probably down. Or maybe you're offline."
     }
 
     const commands = {
