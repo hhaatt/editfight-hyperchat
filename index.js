@@ -14,6 +14,7 @@ const config = {
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
   voteDelay: 15,
+  idleKickMinutes: 7,
 }
 
 process.title = 'editfight-lines'
@@ -134,6 +135,8 @@ server.commands = {
   },
 
   text(ws, text) {
+    resetKicker(ws)
+
     text = text.substring(0, config.charLimit)
     ws.line.text = text
     server.sendToAll({ update: { uuid: ws.uuid, text } })
@@ -151,10 +154,10 @@ server.commands = {
     ws.upvotedLast = now
 
     const i = lines.findIndex((line) => line.uuid === uuid)
-    if (i <= 0)
+    if (i === -1)
       return
 
-    const bad = false
+    let bad = false
     server.wss.clients.forEach((otherWs) => {
       if (ws !== otherWs && ws.ip === otherWs.ip) {
         bad = true
@@ -166,6 +169,12 @@ server.commands = {
       return
 
     moveUp(i)
+
+    server.wss.clients.forEach((ws) => {
+      if (ws.uuid === uuid) {
+        resetKicker(ws)
+      }
+    })
   },
 
   imadmin(ws, bla) {
@@ -235,4 +244,17 @@ function makeAdmin(ws) {
   const line = lines[i]
   line.admin = true
   server.sendToAll({ admin: i })
+}
+
+function resetKicker(ws) {
+  if (ws.kicker) {
+    clearTimeout(ws.kicker)
+  }
+  const n = config.idleKickMinutes * 1000 * 60 * Math.max(ws.line.upvotes, 1)
+  ws.kicker = setTimeout(() => kick(ws), n)
+}
+
+function kick(ws) {
+  log('terminating')
+  ws.terminate()
 }
