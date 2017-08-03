@@ -347,7 +347,7 @@
           <p>&rarr; <a target="_blank"
                href="http://editfight.com/#chat">Send me feedback.</a></p>
 
-          <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            lurkers</p>
+          <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
         </section>
       </div>
     </div>
@@ -430,6 +430,7 @@
       el: '#vue-app',
       data: {
         status: "Connecting...",
+        startedChatting: false,
         idleKickMinutes: 0,
         upvoteLimit: 0,
         showNumbers: false,
@@ -472,7 +473,20 @@
         },
 
         startChatting() {
-          app.$refs['myTextbox'][0].focus()
+          if (!app.startedChatting) {
+            app.startedChatting = true
+            send({ begin: true })
+
+            app.lines.push(viewModelForModel({
+              uuid: app.uuid,
+            }))
+          }
+
+          Vue.nextTick(() => {
+            const el = app.$refs['myTextbox'][0]
+            resize(el)
+            el.focus()
+          })
         },
 
         upvote(uuid) {
@@ -518,15 +532,6 @@
     }
 
     var connection = new WebSocket(`ws://${location.host}/app`)
-
-    // Vue.directive('focus', {
-    //   inserted(el) {
-    //     resize(el)
-    //     el.focus()
-    //   }
-    // })
-
-    // app.toggleDarkMode()
 
     var userCommands = {
 
@@ -594,7 +599,12 @@
       },
 
       added(line) {
-        app.lines.push(viewModelForModel(line))
+        if (line.uuid === app.uuid) {
+
+        }
+        else {
+          app.lines.push(viewModelForModel(line))
+        }
         app.count += 1
         app.lurkers += 1
       },

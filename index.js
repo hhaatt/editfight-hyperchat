@@ -57,17 +57,6 @@ server.onopen = (ws) => {
       idleKickMinutes: config.idleKickMinutes,
     },
   })
-
-  const line = {
-    hash: ws.hash,
-    uuid: ws.uuid,
-    text: '',
-    upvotes: 0,
-  }
-
-  ws.line = line
-  lines.push(line)
-  server.sendToAll({ added: line })
 }
 
 server.onclose = (ws) => {
@@ -111,6 +100,26 @@ server.commands = {
 
   say(ws, text) {
     sayToAll(text)
+  },
+
+  begin(ws, bla) {
+    if (ws.startedChatting) {
+      ws.terminate()
+      return
+    }
+
+    ws.startedChatting = true
+
+    const line = {
+      hash: ws.hash,
+      uuid: ws.uuid,
+      text: '',
+      upvotes: 1,
+    }
+
+    ws.line = line
+    lines.push(line)
+    server.sendToAll({ added: line })
   },
 
   unknownCommand(ws, { name, args }) {
@@ -255,7 +264,7 @@ function resetKicker(ws) {
   if (ws.kicker) {
     clearTimeout(ws.kicker)
   }
-  const n = config.idleKickMinutes * 1000 * 60 * Math.max(ws.line.upvotes, 1)
+  const n = config.idleKickMinutes * 1000 * 60 * ws.line.upvotes
   ws.kicker = setTimeout(() => kick(ws), n)
 }
 
