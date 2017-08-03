@@ -475,8 +475,7 @@
             .substring(0, app.charLimit)
 
           send({ text: app.myText })
-          const textbox = app.$refs['myTextbox'][0]
-          resize(textbox)
+          resizeTextbox()
         },
 
         startChatting() {
@@ -490,9 +489,8 @@
           }
 
           Vue.nextTick(() => {
-            const el = app.$refs['myTextbox'][0]
-            resize(el)
-            el.focus()
+            resizeTextbox()
+            app.$refs['myTextbox'][0].focus()
           })
         },
 
@@ -621,11 +619,13 @@
         else {
           app.lines.push(viewModelLine)
         }
+
+        resizeTextbox()
       },
 
       removed(i) {
         app.lines.splice(i, 1)
-        app.count -= 1
+        resizeTextbox()
       },
 
       update(json) {
@@ -645,6 +645,7 @@
         app.lines[oldIndex] = tmpLine
 
         line.upvotes += 1
+        resizeTextbox()
       },
 
     }
@@ -688,6 +689,11 @@
     function resize(textbox) {
       textbox.style.height = "1px"
       textbox.style.height = (textbox.scrollHeight + 4) + "px"
+    }
+
+    function resizeTextbox() {
+      const textbox = app.$refs['myTextbox'][0]
+      resize(textbox)
     }
   </script>
 </body>

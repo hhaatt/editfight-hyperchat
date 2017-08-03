@@ -189,8 +189,8 @@ server.commands = {
       }
     })
 
-    if (bad)
-      return
+    // if (bad)
+    //   return
 
     moveUp(i)
 
