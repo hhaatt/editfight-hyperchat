@@ -100,6 +100,10 @@ const userCommands = {
     sayToAll(text)
   },
 
+  upgrade(ws) {
+    process.exit()
+  },
+
 }
 
 server.commands = {
