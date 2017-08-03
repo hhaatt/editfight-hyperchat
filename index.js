@@ -111,16 +111,15 @@ server.commands = {
     sayToAll(text)
   },
 
-  unknownCommand(ws, cmdParts) {
-    log(cmdParts)
-    if (cmdParts.length === 0) return
-    const cmdName = cmdParts[0]
-    const cmd = userCommands[cmdName]
+  unknownCommand(ws, { name, args }) {
+    if (!name) return
+
+    const cmd = userCommands[name]
     if (cmd) {
-      cmd(ws, ...cmdParts.slice(1))
+      cmd(ws, args)
     }
     else {
-      log(`Unknown User Command: ${JSON.stringify(cmd)}`)
+      log(`Unknown user command!`)
       // doesn't exist: maybe stop them
     }
   },
