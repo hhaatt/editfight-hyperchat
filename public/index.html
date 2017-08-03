@@ -628,7 +628,7 @@
 
       removed(i) {
         app.lines.splice(i, 1)
-        resizeTextbox()
+        Vue.nextTick(() => resizeTextbox())
       },
 
       update(json) {
