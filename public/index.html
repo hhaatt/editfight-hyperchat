@@ -613,8 +613,14 @@
       },
 
       added(line) {
-        if (line.uuid !== app.uuid) {
-          app.lines.push(viewModelForModel(line))
+        const viewModelLine = viewModelForModel(line)
+
+        if (line.uuid === app.uuid) {
+          const i = app.lines.findIndex((line) => line.uuid === app.uuid)
+          app.lines[i] = viewModelLine
+        }
+        else {
+          app.lines.push(viewModelLine)
         }
       },
 
