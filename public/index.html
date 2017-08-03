@@ -256,7 +256,8 @@
             <li>Your textbox starts at the bottom.</li>
             <li>Everyone can see everyone typing live.</li>
             <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
-            <li>You can move someone up one spot every 15 seconds.</li>
+            <li>You can vote someone upwards every 15 seconds.</li>
+            <li>There's an idle-timeout of 7 &times; Votes minutes.</li>
             <!-- <li>You can move yourself down one spot every 15 seconds.</li> -->
           </ol>
           <!-- <p><span v-html="showDonateLink ? '&minus;' : '&plus;'"></span> <a href="#"
@@ -273,7 +274,7 @@
             <li>Write your feature requests <a target="_blank"
                  href="http://editfight.com/#chat">here</a>.</li>
           </ol> -->
-          <p><b>{{count - lurkers}}</b> active; <b>{{lurkers}}</b> lurkers</p>
+          <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            lurkers</p>
           <!-- <p><b>Note:</b> Also check out my <a href='http://editfight.com'
                target='_blank'>multiplayer story telling game</a>.</p> -->
         </section>
