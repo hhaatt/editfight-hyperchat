@@ -364,6 +364,7 @@
               <div div
                    class="line-container">
                 <textarea type="text"
+                          v-focus
                           id="input"
                           ref="myTextbox"
                           class="line"
@@ -495,10 +496,7 @@
             }))
           }
 
-          Vue.nextTick(() => {
-            resizeTextbox()
-            app.$refs['myTextbox'][0].focus()
-          })
+          resizeTextbox()
         },
 
         upvote(uuid) {
@@ -535,6 +533,13 @@
           localStorage.setItem('darkmode', app.darkMode ? '1' : '0')
         },
 
+      }
+    })
+
+    Vue.directive('focus', {
+      inserted(textbox) {
+        resize(textbox)
+        textbox.focus()
       }
     })
 
@@ -720,9 +725,13 @@
     }
 
     function resizeTextbox() {
-      const textbox = app.$refs['myTextbox'][0]
-      resize(textbox)
+      Vue.nextTick(() => {
+        const textbox = app.$refs['myTextbox'][0]
+        resize(textbox)
+      })
     }
+
+    setTimeout(() => app.startChatting(), 1)
   </script>
 </body>
 
