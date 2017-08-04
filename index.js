@@ -131,6 +131,7 @@ server.commands = {
       uuid: ws.uuid,
       text: '',
       upvotes: 1,
+      darkmode: false,
     }
 
     ws.line = line
