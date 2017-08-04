@@ -114,7 +114,7 @@
     }
 
     .line-container {
-      margin: 1em 0;
+      margin-bottom: 1em;
       display: flex;
     }
 
@@ -129,13 +129,23 @@
     .line {
       background-color: white;
       padding: 1em;
-      border-radius: 0.33em;
+      border-bottom-left-radius: 0.33em;
+      border-bottom-right-radius: 0.33em;
       border-bottom: 0.25em #e8e8e8 solid;
       font-family: 'Menlo', monospace;
       font-weight: bold;
       white-space: pre-wrap;
       overflow: auto;
       max-height: 15em;
+    }
+
+    .nametag {
+      margin-top: 1em;
+      display: inline-block;
+      background-color: white;
+      padding: 0.5em 1em;
+      border-top-left-radius: 0.33em;
+      border-top-right-radius: 0.33em;
     }
 
     .line.admin {
@@ -252,6 +262,10 @@
     html.dark .line {
       background: #2b2b2b;
       border-color: #191919;
+    }
+
+    html.dark .nametag {
+      background: #2b2b2b;
     }
 
     html.dark #input {
@@ -375,10 +389,9 @@
              id="status">{{status}}</div>
         <div v-if="connected">
           <template v-for="line in lines">
-            <span>{{line.name}}</span>
             <template v-if="line.uuid === uuid">
-              <div div
-                   class="line-container">
+              <span class="nametag">{{line.name}}</span>
+              <div class="line-container">
                 <textarea type="text"
                           v-focus
                           id="input"
@@ -418,8 +431,8 @@
 
             </template>
             <template v-else>
-              <div div
-                   class="line-container">
+              <span class="nametag">{{line.name}}</span>
+              <div class="line-container">
                 <div class="line"
                      v-bind:class="line.specialClass"
                      v-bind:style="{ color: line.color }">{{ line.text }}</div>
@@ -634,15 +647,15 @@
         }
       },
 
-      initial({ name, count, idleKickMinutes, upvoteLimit, lines, hash, uuid, charLimit }) {
-        app.name = name
-        app.myColor = colorForHash(hash)
-        app.charLimit = charLimit
-        app.uuid = uuid
-        app.upvoteLimit = upvoteLimit
-        app.idleKickMinutes = idleKickMinutes
-        app.count = count
-        app.lines = lines.map(viewModelForModel)
+      initial(initial) {
+        app.name = initial.name
+        app.myColor = colorForHash(initial.hash)
+        app.charLimit = initial.charLimit
+        app.uuid = initial.uuid
+        app.upvoteLimit = initial.upvoteLimit
+        app.idleKickMinutes = initial.idleKickMinutes
+        app.count = initial.count
+        app.lines = initial.lines.map(viewModelForModel)
       },
 
       joined() {
@@ -657,10 +670,11 @@
         const viewModelLine = viewModelForModel(line)
 
         if (line.uuid === app.uuid) {
-          window.onbeforeunload = () => confirm("You sure you want to leave?")
+          window.onbeforeunload = () => "You sure you want to leave?"
 
           const i = app.lines.findIndex((line) => line.uuid === app.uuid)
-          app.lines[i] = viewModelLine
+
+          Object.assign(app.lines[i], viewModelLine)
 
           const myColorMaybe = localStorage.getItem('mycolor')
           if (myColorMaybe) {
