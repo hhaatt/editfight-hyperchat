@@ -113,19 +113,6 @@
       resize: none;
     }
 
-    .line-container {
-      margin-bottom: 1em;
-      display: flex;
-    }
-
-    .line-container>*:first-child {
-      flex: 1 0;
-    }
-
-    .line-container>*:last-child {
-      flex: 0 1;
-    }
-
     .line {
       background-color: white;
       padding: 1em;
@@ -137,6 +124,7 @@
       white-space: pre-wrap;
       overflow: auto;
       max-height: 15em;
+      margin-bottom: 1em;
     }
 
     .nametag {
@@ -151,23 +139,6 @@
     .line.admin {
       background-color: #fffedd;
       border-color: #E2E1B9 !important;
-    }
-
-    .upvote-button {
-      margin-left: 1em;
-      outline: none;
-      border: 0;
-      border-bottom: 3px solid #236d21;
-      background: #5fc35d;
-      color: white;
-      padding: 0.25em 0.5em;
-      border-radius: 0.25em;
-      cursor: pointer;
-    }
-
-    .upvote-button:disabled {
-      background: #ddd;
-      border-bottom-color: #bbb;
     }
 
     #announcements {
@@ -283,17 +254,6 @@
       border-color: #272608 !important;
     }
 
-    html.dark .upvote-button {
-      border-color: #0d500c;
-      background: #2a6329;
-      color: white;
-    }
-
-    html.dark .upvote-button:disabled {
-      background: #505050;
-      border-bottom-color: #333333;
-    }
-
     html.dark .announcement {
       background: #98986e;
       color: #333;
@@ -391,23 +351,18 @@
           <template v-for="line in lines">
             <template v-if="line.uuid === uuid">
               <span class="nametag">{{line.name}}</span>
-              <div class="line-container">
-                <textarea type="text"
-                          v-focus
-                          id="input"
-                          ref="myTextbox"
-                          class="line"
-                          autocapitalize="none"
-                          v-model="myText"
-                          v-on:input="updateText($event)"
-                          v-bind:class="line.specialClass"
-                          v-bind:style="{ color: myColor }"></textarea>
-                <div>
-                  <button class="upvote-button"
-                          v-if="showNumbers"
-                          disabled>{{ line.upvotes }}</button>
-                </div>
-              </div>
+              <span class="nametag"
+                    v-if="showNumbers">{{ line.upvotes }}</span>
+              <textarea type="text"
+                        v-focus
+                        id="input"
+                        ref="myTextbox"
+                        class="line"
+                        autocapitalize="none"
+                        v-model="myText"
+                        v-on:input="updateText($event)"
+                        v-bind:class="line.specialClass"
+                        v-bind:style="{ color: myColor }"></textarea>
 
               <div id="powers-section"
                    v-if="powers">
@@ -432,16 +387,15 @@
             </template>
             <template v-else>
               <span class="nametag">{{line.name}}</span>
-              <div class="line-container">
-                <div class="line"
-                     v-bind:class="line.specialClass"
-                     v-bind:style="{ color: line.color }">{{ line.text }}</div>
-                <div>
-                  <button class="upvote-button"
-                          v-bind:disabled="!canVote"
-                          v-on:click.prevent="upvote(line.uuid)"><template v-if="showNumbers">{{ line.upvotes }}&nbsp;</template>&uarr;</button>
-                </div>
-              </div>
+              <a class="nametag"
+                 href="#"
+                 v-bind:disabled="!canVote"
+                 v-on:click.prevent="upvote(line.uuid)">Upvote</a>
+              <span class="nametag"
+                    v-if="showNumbers">{{line.upvotes}}</span>
+              <div class="line"
+                   v-bind:class="line.specialClass"
+                   v-bind:style="{ color: line.color }">{{ line.text }}</div>
             </template>
           </template>
         </div>
