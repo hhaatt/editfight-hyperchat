@@ -418,6 +418,7 @@
                    v-bind:disabled="!canVote"
                    v-on:click.prevent="upvote(line.uuid)">upvote</a>
                 <span v-if="showNumbers">{{line.upvotes}}</span>
+                <span>{{line.darkmode ? 'dark' : 'light'}}</span>
               </div>
               <div class="line"
                    v-bind:class="line.specialClass"
@@ -438,6 +439,8 @@
       window.location.href = 'http://hyperchat.editfight.com/'
       throw new Error('Redirecting.')
     }
+
+    var queue = []
 
     const app = new Vue({
       el: '#vue-app',
@@ -541,6 +544,7 @@
           app.darkMode = !app.darkMode
           document.documentElement.classList.toggle('dark')
           localStorage.setItem('darkmode', app.darkMode ? '1' : '0')
+          send({ darkmode: app.darkMode })
         },
 
       }
@@ -616,6 +620,7 @@
 
       admin(i) {
         app.lines[i].specialClass = { admin: true }
+        app.$forceUpdate()
       },
 
       color(json) {
@@ -626,6 +631,14 @@
           const line = app.lines.find((line) => line.uuid === json.uuid)
           line.color = json.color
         }
+        app.$forceUpdate()
+      },
+
+      darkmode({ uuid, on }) {
+        console.log(uuid, on)
+        const line = app.lines.find((line) => line.uuid === uuid)
+        line.darkmode = on
+        app.$forceUpdate()
       },
 
       initial(initial) {
@@ -641,10 +654,12 @@
 
       joined() {
         app.count += 1
+        app.$forceUpdate()
       },
 
       left() {
         app.count -= 1
+        app.$forceUpdate()
       },
 
       added(line) {
@@ -661,26 +676,32 @@
           if (myColorMaybe) {
             send({ color: myColorMaybe })
           }
+
+          queue.forEach((msg) => send(msg))
         }
         else {
           app.lines.push(viewModelLine)
         }
 
+        app.$forceUpdate()
         resizeTextbox()
       },
 
       removed(i) {
         app.lines.splice(i, 1)
-        Vue.nextTick(() => resizeTextbox())
+        app.$forceUpdate()
+        resizeTextbox()
       },
 
       update(json) {
         const line = app.lines.find((line) => line.uuid === json.uuid)
         line.text = normalizeText(json.text)
+        app.$forceUpdate()
       },
 
       announcement(text) {
         showAnnouncement(text)
+        app.$forceUpdate()
       },
 
       moved(oldIndex) {
@@ -691,6 +712,7 @@
         app.lines[oldIndex] = tmpLine
 
         line.upvotes += 1
+        app.$forceUpdate()
         resizeTextbox()
       },
 
@@ -730,7 +752,13 @@
     }
 
     function send(msg) {
-      connection.send(JSON.stringify(msg))
+      console.log('sending', msg)
+      if (app.connected) {
+        connection.send(JSON.stringify(msg))
+      }
+      else {
+        queue.push(msg)
+      }
     }
 
     function resize(textbox) {
@@ -741,8 +769,9 @@
     function resizeTextbox() {
       Vue.nextTick(() => {
         const textboxes = app.$refs['myTextbox']
-        if (textboxes.length === 0) return
-        resize(textboxes[0])
+        if (textboxes && textboxes.length >= 1) {
+          resize(textboxes[0])
+        }
       })
     }
 

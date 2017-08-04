@@ -164,6 +164,16 @@ server.commands = {
     })
   },
 
+  darkmode(ws, on) {
+    ws.line.darkmode = on
+    server.sendToAll({
+      darkmode: {
+        uuid: ws.uuid,
+        on: on
+      }
+    })
+  },
+
   text(ws, text) {
     resetKicker(ws)
 
