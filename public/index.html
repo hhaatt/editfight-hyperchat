@@ -140,6 +140,7 @@
       border-right: 1px solid #f0f0f0;
       padding: 0.5em 1em;
       display: inline-block;
+      background: transparent;
     }
 
     .line.admin {
@@ -333,21 +334,34 @@
           <p>&lambda; <a href="#"
                v-on:click.prevent="startChatting">Open your textbox.</a></p>
           <p><span v-html="showInstructions ? '&minus;' : '&plus;'"></span> <a href="#"
-               v-on:click.prevent="showInstructions = !showInstructions">Instruction manual; v2.</a></p>
+               v-on:click.prevent="showInstructions = !showInstructions">Instruction manual.</a></p>
           <ol class="indented"
               v-if="showInstructions">
             <li>Your textbox starts at the bottom.</li>
             <li>Everyone can see everyone typing live.</li>
-            <li>Lines are limited to <b>{{charLimit}}</b> characters.</li>
+            <li>Everyone gets an auto-generated nickname.</li>
+            <li>Boxes are limited to <b>{{charLimit}}</b> characters.</li>
             <li>You can upvote someone every <b>{{upvoteLimit}}</b> seconds.</li>
             <li>There's an idle-timeout of <b>{{idleKickMinutes}} &times; $votes</b> minutes.</li>
+            <li>The cheat code is inspired by <a target="_blank"
+                 href="https://youtu.be/M_XwzBMTJaM?t=104">this YouTube clip</a>.</li>
           </ol>
+
+          <p><span v-html="showExplanation ? '&minus;' : '&plus;'"></span> <a href="#"
+               v-on:click.prevent="showExplanation = !showExplanation">Why does this exist?</a></p>
+          <ul class="indented"
+              v-if="showExplanation">
+            <li>I like programming.</li>
+            <li>I like bringing people together.</li>
+            <li>I was bored on a Sunday.</li>
+            <li>People keep coming back.</li>
+          </ul>
 
           <p>&gt; <a href="#"
                v-on:click.prevent="toggleDarkMode">{{darkMode ? "Light Mode" : "Dark Mode"}}.</a></p>
           <p>&rarr; <a target="_blank"
-               href="http://editfight.com/#chat">Send me feedback.</a></p>
-          <p>&rarr; <a href="mailto:admin@editfight.com">I'm looking for programming work.</a></p>
+               href="mailto:admin@editfight.com">Send me feedback.</a></p>
+          <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p>
           <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
         </section>
       </div>
@@ -434,7 +448,8 @@
         upvoteLimit: 0,
         showNumbers: false,
         darkMode: false,
-        showInstructions: false,
+        showExplanation: false,
+        showInstructions: true,
         canVote: true,
         charLimit: 'n',
         count: 0,
