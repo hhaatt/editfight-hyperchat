@@ -64,8 +64,8 @@
       color: purple;
     }
 
-    a:hover {
-      color: crimson;
+    a[disabled="disabled"] {
+      color: #999;
     }
 
     .column {
@@ -131,18 +131,15 @@
       margin-top: 1em;
       display: block;
       background-color: white;
-      padding: 0.5em 1em;
       border-top-left-radius: 0.33em;
       border-top-right-radius: 0.33em;
       border-bottom: 1px solid #f0f0f0;
     }
 
     .nametag>* {
-      margin-right: 1ch;
-    }
-
-    .nametag>*:last-child {
-      margin-right: 0;
+      border-right: 1px solid #f0f0f0;
+      padding: 0.5em 1em;
+      display: inline-block;
     }
 
     .line.admin {
@@ -235,10 +232,6 @@
       color: #cba6f1;
     }
 
-    html.dark a:hover {
-      color: #a6f1c9;
-    }
-
     html.dark .line {
       background: #2b2b2b;
       border-color: #191919;
@@ -247,6 +240,10 @@
     html.dark .nametag {
       background: #2b2b2b;
       border-bottom: 1px solid #3c3c3c;
+    }
+
+    html.dark .nametag>* {
+      border-color: #3c3c3c;
     }
 
     html.dark #input {
