@@ -132,7 +132,6 @@
       border-radius: 0.33em;
       border-bottom: 0.25em #e8e8e8 solid;
       font-family: 'Menlo', monospace;
-      font-size: 10pt;
       font-weight: bold;
       white-space: pre-wrap;
       overflow: auto;
@@ -348,7 +347,7 @@
                v-on:click.prevent="toggleDarkMode">{{darkMode ? "Light Mode" : "Dark Mode"}}.</a></p>
           <p>&rarr; <a target="_blank"
                href="http://editfight.com/#chat">Send me feedback.</a></p>
-
+          <p>&rarr; <a href="mailto:admin@editfight.com">I'm looking for programming work.</a></p>
           <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
         </section>
       </div>
@@ -640,6 +639,8 @@
         const viewModelLine = viewModelForModel(line)
 
         if (line.uuid === app.uuid) {
+          window.onbeforeunload = () => confirm("You sure you want to leave?")
+
           const i = app.lines.findIndex((line) => line.uuid === app.uuid)
           app.lines[i] = viewModelLine
 
