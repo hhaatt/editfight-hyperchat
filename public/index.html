@@ -322,7 +322,22 @@
       <header>
         <section class="column">
           <h1>
-            <a href="/">HyperChat.EditFight.com</a>
+            <a href="/">
+              <pre style="font-size:12px;font-family:Menlo,monospace">
+██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗
+██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
+███████║ ╚████╔╝ ██████╔╝█████╗  ██████╔╝
+██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══╝  ██╔══██╗
+██║  ██║   ██║   ██║     ███████╗██║  ██║
+╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚══════╝╚═╝  ╚═╝
+ ██████╗██╗  ██╗ █████╗ ████████╗
+██╔════╝██║  ██║██╔══██╗╚══██╔══╝
+██║     ███████║███████║   ██║
+██║     ██╔══██║██╔══██║   ██║
+╚██████╗██║  ██║██║  ██║   ██║
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝
+            </pre>
+            </a>
           </h1>
         </section>
       </header>
@@ -360,6 +375,7 @@
              id="status">{{status}}</div>
         <div v-if="connected">
           <template v-for="line in lines">
+            <span>{{line.name}}</span>
             <template v-if="line.uuid === uuid">
               <div div
                    class="line-container">
@@ -591,6 +607,7 @@
       app.connected = false
       console.log('closing', e)
       showAnnouncement('Disconnected. Auto-refreshing for you.')
+      window.onbeforeunload = null
       setTimeout(() => {
         window.location.reload(true)
       }, 500)
@@ -617,7 +634,8 @@
         }
       },
 
-      initial({ count, idleKickMinutes, upvoteLimit, lines, hash, uuid, charLimit }) {
+      initial({ name, count, idleKickMinutes, upvoteLimit, lines, hash, uuid, charLimit }) {
+        app.name = name
         app.myColor = colorForHash(hash)
         app.charLimit = charLimit
         app.uuid = uuid
@@ -702,6 +720,7 @@
 
     function viewModelForModel(line) {
       return {
+        name: line.name,
         text: normalizeText(line.text),
         color: line.color ? line.color : colorForHash(line.hash),
         uuid: line.uuid,

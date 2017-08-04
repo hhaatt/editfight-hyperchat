@@ -41,6 +41,7 @@ const lifetimes = {}
 
 server.onopen = (ws) => {
   ws.hash = hashForString(uuid())
+  ws.name = uuid().substring(0, 4).toUpperCase()
   ws.uuid = uuid()
   ws.joined = (new Date()).getTime()
 
@@ -48,6 +49,7 @@ server.onopen = (ws) => {
 
   server.send(ws, {
     initial: {
+      name: ws.name,
       lines,
       hash: ws.hash,
       uuid: ws.uuid,
@@ -121,6 +123,7 @@ server.commands = {
     ws.startedChatting = true
 
     const line = {
+      name: ws.name,
       hash: ws.hash,
       uuid: ws.uuid,
       text: '',
