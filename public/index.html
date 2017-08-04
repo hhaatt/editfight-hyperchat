@@ -759,8 +759,9 @@
 
     function resizeTextbox() {
       Vue.nextTick(() => {
-        const textbox = app.$refs['myTextbox'][0]
-        resize(textbox)
+        const textboxes = app.$refs['myTextbox']
+        if (textboxes.length === 0) return
+        resize(textboxes[0])
       })
     }
 
