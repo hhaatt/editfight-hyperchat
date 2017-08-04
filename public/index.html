@@ -129,11 +129,20 @@
 
     .nametag {
       margin-top: 1em;
-      display: inline-block;
+      display: block;
       background-color: white;
       padding: 0.5em 1em;
       border-top-left-radius: 0.33em;
       border-top-right-radius: 0.33em;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .nametag>* {
+      margin-right: 1ch;
+    }
+
+    .nametag>*:last-child {
+      margin-right: 0;
     }
 
     .line.admin {
@@ -350,9 +359,10 @@
         <div v-if="connected">
           <template v-for="line in lines">
             <template v-if="line.uuid === uuid">
-              <span class="nametag">{{line.name}}</span>
-              <span class="nametag"
-                    v-if="showNumbers">{{ line.upvotes }}</span>
+              <div class="nametag">
+                <span>{{line.name}}</span>
+                <span v-if="showNumbers">{{ line.upvotes }}</span>
+              </div>
               <textarea type="text"
                         v-focus
                         id="input"
@@ -386,13 +396,13 @@
 
             </template>
             <template v-else>
-              <span class="nametag">{{line.name}}</span>
-              <a class="nametag"
-                 href="#"
-                 v-bind:disabled="!canVote"
-                 v-on:click.prevent="upvote(line.uuid)">Upvote</a>
-              <span class="nametag"
-                    v-if="showNumbers">{{line.upvotes}}</span>
+              <div class="nametag">
+                <span>{{line.name}}</span>
+                <a href="#"
+                   v-bind:disabled="!canVote"
+                   v-on:click.prevent="upvote(line.uuid)">upvote</a>
+                <span v-if="showNumbers">{{line.upvotes}}</span>
+              </div>
               <div class="line"
                    v-bind:class="line.specialClass"
                    v-bind:style="{ color: line.color }">{{ line.text }}</div>
