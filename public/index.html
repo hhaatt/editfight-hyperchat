@@ -635,7 +635,6 @@
       },
 
       darkmode({ uuid, on }) {
-        console.log(uuid, on)
         const line = app.lines.find((line) => line.uuid === uuid)
         line.darkmode = on
         app.$forceUpdate()
@@ -752,7 +751,6 @@
     }
 
     function send(msg) {
-      console.log('sending', msg)
       if (app.connected) {
         connection.send(JSON.stringify(msg))
       }
