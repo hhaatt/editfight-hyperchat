@@ -5,6 +5,9 @@ const { Party } = require('./lib/party')
 const { Server } = require('./lib/server')
 const uuid = require('uuid/v4');
 
+const fs = require('fs')
+const words = String(fs.readFileSync('words.txt')).split(/[\r\n]/g)
+
 const config = {
   port: 4000,
   origin: process.env.NODE_ORIGIN,
@@ -41,7 +44,7 @@ const lifetimes = {}
 
 server.onopen = (ws) => {
   ws.hash = hashForString(uuid())
-  ws.name = uuid().substring(0, 4).toUpperCase()
+  ws.name = words[Math.abs(hashForString(ws.ip)) % words.length]
   ws.uuid = uuid()
   ws.joined = (new Date()).getTime()
 

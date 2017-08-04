@@ -663,9 +663,7 @@
           app.lines[i] = viewModelLine
 
           const myColorMaybe = localStorage.getItem('mycolor')
-          console.log(myColorMaybe)
           if (myColorMaybe) {
-            console.log('sending')
             send({ color: myColorMaybe })
           }
         }
