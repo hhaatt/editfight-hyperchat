@@ -93,15 +93,15 @@ const maybeBan = {}
 
 const userCommands = {
 
-  imadmin2(ws) {
+  [-24890516](ws) {
     makeAdmin(ws)
   },
 
-  autotop2(ws) {
+  [-2583037945](ws) {
     autotop(ws)
   },
 
-  say2(ws, text) {
+  [2943788](ws, text) {
     sayToAll(text)
   },
 
@@ -113,7 +113,7 @@ const userCommands = {
 
 server.commands = {
 
-  say2(ws, text) {
+  [2943788](ws, text) {
     sayToAll(text)
   },
 
@@ -142,14 +142,20 @@ server.commands = {
   unknownCommand(ws, { name, args }) {
     if (!name) return
 
-    const cmd = userCommands[name]
+    let cmd = userCommands[name]
     if (cmd) {
       cmd(ws, args)
+      return
     }
-    else {
-      log(`Unknown user command!`)
-      // doesn't exist: maybe stop them
+
+    cmd = userCommands[hashForString(name)]
+    if (cmd) {
+      cmd(ws, args)
+      return
     }
+
+    log(`Unknown user command!`)
+    // doesn't exist: maybe stop them
   },
 
   color(ws, color) {
@@ -218,15 +224,15 @@ server.commands = {
     })
   },
 
-  imadmin2(ws, bla) {
+  [-24890516](ws, bla) {
     makeAdmin(ws)
   },
 
-  autotop2(ws, bla) {
+  [-2583037945](ws, bla) {
     autotop(ws)
   },
 
-  ban2(ws, uuid) {
+  [2927440](ws, uuid) {
     server.wss.clients.forEach((ws) => {
       if (ws.uuid === uuid) {
         banned.push(ws.ip)
@@ -277,6 +283,7 @@ function hashForString(str) {
   }
   return hash
 }
+server.hashForString = hashForString
 
 server.run()
 
