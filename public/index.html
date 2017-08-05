@@ -409,9 +409,9 @@
       <section class="column">
 
         <div v-if="imgurSource">
-          <h3>Loading image from {{imgurSource}}...</h3>
           <img style="max-width: 100%"
                v-bind:src="imgurSource">
+          <h3>Loading image from {{imgurSource}}...</h3>
         </div>
 
         <div v-if="status"
