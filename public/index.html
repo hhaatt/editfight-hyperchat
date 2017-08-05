@@ -512,28 +512,13 @@
         announcements: [],
         powers: false,
         myCommand: '',
+        imgurSource: null,
       },
 
       computed: {
 
         lurkers() {
           return this.count - this.lines.length
-        },
-
-        imgurSource() {
-          if (this.lines.length === 0)
-            return null
-
-          const text = this.lines[0].text
-
-          if (!text.startsWith('#imgur '))
-            return null
-
-          const part = text.substring(7).trim()
-          if (!part)
-            return null
-
-          return `http://i.imgur.com/${part}.jpg`
         },
 
       },
@@ -755,12 +740,14 @@
         app.lines.splice(i, 1)
         app.$forceUpdate()
         resizeTextbox()
+        updateImgurSource()
       },
 
       update(json) {
         const line = app.lines.find((line) => line.uuid === json.uuid)
         line.text = normalizeText(json.text)
         app.$forceUpdate()
+        updateImgurSource()
       },
 
       announcement(text) {
@@ -778,6 +765,7 @@
         line.upvotes += 1
         app.$forceUpdate()
         resizeTextbox()
+        updateImgurSource()
       },
 
     }
@@ -837,6 +825,26 @@
           resize(textboxes[0])
         }
       })
+    }
+
+    function buildImgurSource() {
+      if (app.lines.length === 0)
+        return null
+
+      const text = app.lines[0].text
+
+      if (!text.startsWith('#imgur '))
+        return null
+
+      const part = text.substring(7).trim()
+      if (!part)
+        return null
+
+      return `http://i.imgur.com/${part}.jpg`
+    }
+
+    function updateImgurSource() {
+      app.imgurSource = buildImgurSource()
     }
 
     // setTimeout(() => app.startChatting(), 1)
