@@ -303,8 +303,8 @@ function resetKicker(ws) {
 }
 
 function kick(ws) {
-  log('terminating')
-  ws.terminate()
+  // log('terminating')
+  // ws.terminate()
 }
 
 function rateLimit(ws, name, sec, fn) {
