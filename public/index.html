@@ -116,8 +116,7 @@
     .line {
       background-color: white;
       padding: 1em;
-      border-bottom-left-radius: 0.33em;
-      border-bottom-right-radius: 0.33em;
+      border-radius: 0.33em;
       border-bottom: 0.25em #e8e8e8 solid;
       font-family: 'Menlo', monospace;
       font-weight: bold;
@@ -346,8 +345,8 @@
       <div id="subhead">
         <section class="column">
           <h2>Hyper-real-time chat.</h2>
-          <p># <a href="https://github.com/sdegutis/editfight-hyperchat"
-               target="_blank">Source code (github repo).</a></p>
+          <!-- <p># <a href="https://github.com/sdegutis/editfight-hyperchat"
+               target="_blank">Source code (github repo).</a></p> -->
           <p>&lambda; <a href="#"
                v-on:click.prevent="startChatting">Open your textbox.</a></p>
           <p><span v-html="showInstructions ? '&minus;' : '&plus;'"></span> <a href="#"
@@ -364,7 +363,7 @@
                  href="https://youtu.be/M_XwzBMTJaM?t=104">this YouTube clip</a>.</li>
           </ol>
 
-          <p><span v-html="showExplanation ? '&minus;' : '&plus;'"></span> <a href="#"
+          <!-- <p><span v-html="showExplanation ? '&minus;' : '&plus;'"></span> <a href="#"
                v-on:click.prevent="showExplanation = !showExplanation">Why does this exist?</a></p>
           <ul class="indented"
               v-if="showExplanation">
@@ -372,15 +371,15 @@
             <li>I like bringing people together.</li>
             <li>I was bored on a Sunday.</li>
             <li>People keep coming back.</li>
-          </ul>
+          </ul> -->
 
           <p>&gt; <a href="#"
                v-on:click.prevent="toggleDarkMode">{{darkMode ? "Light Mode" : "Dark Mode"}}.</a></p>
-          <p>&rarr; <a target="_blank"
-               href="https://github.com/sdegutis/editfight-hyperchat/issues">Send me feedback.</a></p>
-          <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p>
+          <!-- <p>&rarr; <a target="_blank"
+               href="https://github.com/sdegutis/editfight-hyperchat/issues">Send me feedback.</a></p> -->
+          <!-- <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p> -->
           <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
-
+          <!--
 
           <form name="_xclick"
                 id="donation"
@@ -408,6 +407,7 @@
               </li>
             </ul>
           </form>
+           -->
         </section>
       </div>
     </div>
@@ -428,7 +428,7 @@
              id="status">{{status}}</div>
         <div v-if="connected">
           <template v-for="line in lines">
-            <div class="nametag">
+            <!-- <div class="nametag">
               <span>{{line.name}}</span>
               <span class="admin"
                     v-if="line.admin">(admin)</span>
@@ -438,7 +438,7 @@
                  v-on:click.prevent="upvote(line.uuid)">upvote</a>
               <span v-if="showNumbers">{{ line.upvotes }}</span>
               <span>{{line.darkmode ? 'dark' : 'light'}}</span>
-            </div>
+            </div> -->
             <template v-if="line.uuid === uuid">
               <textarea type="text"
                         v-focus
