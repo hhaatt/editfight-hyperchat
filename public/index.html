@@ -327,7 +327,8 @@
         <section class="column">
           <h1>
             <a href="/">
-              <pre style="font-size:12px;font-family:Menlo,monospace">
+              <pre style="font-size:12px;font-family:Menlo,monospace"
+                   v-if="showTopStuff">
 ██╗  ██╗██╗   ██╗██████╗ ███████╗██████╗
 ██║  ██║╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
 ███████║ ╚████╔╝ ██████╔╝█████╗  ██████╔╝
@@ -341,6 +342,9 @@
 ╚██████╗██║  ██║██║  ██║   ██║
  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝
             </pre>
+              <template v-if="!showTopStuff">
+                HyperChat.EditFight.com
+              </template>
             </a>
           </h1>
         </section>
@@ -351,20 +355,12 @@
           <h2>Hyper-real-time chat.</h2>
           <!-- <p># <a href="https://github.com/sdegutis/editfight-hyperchat"
                target="_blank">Source code (github repo).</a></p> -->
-          <p>&lambda; <a href="#"
-               v-on:click.prevent="startChatting">Open your textbox.</a></p>
-          <p><span v-html="showInstructions ? '&minus;' : '&plus;'"></span> <a href="#"
-               v-on:click.prevent="showInstructions = !showInstructions">Instruction manual.</a></p>
-          <ol class="indented"
-              v-if="showInstructions">
-            <li>Your textbox starts at the bottom.</li>
+          <ol v-if="showTopStuff">
+            <li><a href="#"
+                 v-on:click.prevent="startChatting">Open your textbox.</a></li>
             <li>Everyone can see everyone typing live.</li>
-            <li>Everyone gets an auto-generated nickname.</li>
-            <li>Boxes are limited to <b>{{charLimit}}</b> characters.</li>
-            <li>You can upvote someone every <b>{{upvoteLimit}}</b> seconds.</li>
-            <li>There's an idle-timeout of <b>{{idleKickMinutes}} &times; $votes</b> minutes.</li>
-            <li>The cheat code is inspired by <a target="_blank"
-                 href="https://youtu.be/M_XwzBMTJaM?t=104">this YouTube clip</a>.</li>
+            <li>There's a <a target="_blank"
+                 href="https://youtu.be/M_XwzBMTJaM?t=104">cheat code</a>.</li>
           </ol>
 
           <!-- <p><span v-html="showExplanation ? '&minus;' : '&plus;'"></span> <a href="#"
@@ -377,12 +373,15 @@
             <li>People keep coming back.</li>
           </ul> -->
 
-          <p>&gt; <a href="#"
+          <p v-if="showTopStuff">&rarr; <a href="#"
                v-on:click.prevent="toggleDarkMode">{{darkMode ? "Light Mode" : "Dark Mode"}}.</a></p>
+
+          <p>&rarr; <a href="#"
+               v-on:click.prevent="showTopStuff = !showTopStuff">{{showTopStuff ? 'Abbreviated' : 'Verbose'}} mode.</a></p>
           <!-- <p>&rarr; <a target="_blank"
                href="https://github.com/sdegutis/editfight-hyperchat/issues">Send me feedback.</a></p> -->
           <!-- <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p> -->
-          <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
+          <p>&lambda; <b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
           <!--
 
           <form name="_xclick"
@@ -500,6 +499,7 @@
     const app = new Vue({
       el: '#vue-app',
       data: {
+        showTopStuff: true,
         status: "Connecting...",
         startedChatting: false,
         idleKickMinutes: 0,
