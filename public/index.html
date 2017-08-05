@@ -282,6 +282,22 @@
     html.dark #powers::placeholder {
       color: #555;
     }
+
+    #donation {
+      border: 1px solid #bdbd83;
+      padding: 1em;
+      background: #ffffb9;
+      border-radius: 0.33em;
+    }
+
+    #donation ul {
+      margin-bottom: 0;
+    }
+
+    html.dark #donation {
+      border-color: #656542;
+      background: #444435;
+    }
   </style>
 </head>
 
@@ -357,12 +373,46 @@
                href="mailto:admin@editfight.com">Send me feedback.</a></p>
           <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p>
           <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
+
+
+          <form name="_xclick"
+                id="donation"
+                action="https://www.paypal.com/yt/cgi-bin/webscr"
+                method="post">
+            <input type="hidden"
+                   name="cmd"
+                   value="_xclick">
+            <input type="hidden"
+                   name="business"
+                   value="sbdegutis@gmail.com">
+            <input type="hidden"
+                   name="item_name"
+                   value="Team In Training">
+            <input type="hidden"
+                   name="currency_code"
+                   value="USD">
+            <input type="hidden"
+                   name="amount"
+                   value="25.00"> Appreciate this site?
+            <ul>
+              <li>Tell your friends about it!</li>
+              <li><a href='#'
+                   v-on:click.prevent="document.getElementById('donation').submit()">Donate $25</a> to help keep it running.
+              </li>
+            </ul>
+          </form>
         </section>
       </div>
     </div>
 
     <main>
       <section class="column">
+
+        <div v-if="imgurSource">
+          <h3>Loading image from {{imgurSource}}...</h3>
+          <img style="max-width: 100%"
+               v-bind:src="imgurSource">
+        </div>
 
         <div v-if="status"
              id="status">{{status}}</div>
@@ -460,6 +510,22 @@
 
         lurkers() {
           return this.count - this.lines.length
+        },
+
+        imgurSource() {
+          if (this.lines.length === 0)
+            return null
+
+          const text = this.lines[0].text
+
+          if (!text.startsWith('#imgur '))
+            return null
+
+          const part = text.substring(7).trim()
+          if (!part)
+            return null
+
+          return `http://i.imgur.com/${part}.jpg`
         },
 
       },

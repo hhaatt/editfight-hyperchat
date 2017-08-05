@@ -17,7 +17,7 @@ const config = {
   upvotesNeededToMoveUp: 3,
   differenceThreshold: 30,
   voteDelay: 15,
-  idleKickMinutes: 77,
+  idleKickMinutes: 7,
 }
 
 process.title = 'editfight-lines'
