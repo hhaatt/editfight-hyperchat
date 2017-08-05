@@ -298,6 +298,11 @@
       border-color: #656542;
       background: #444435;
     }
+
+    #image {
+      height: 30em;
+      overflow: scroll;
+    }
   </style>
 </head>
 
@@ -408,10 +413,13 @@
     <main>
       <section class="column">
 
-        <div v-if="imgurSource">
-          <img style="max-width: 100%"
-               v-bind:src="imgurSource">
-          <h3>Loading image from {{imgurSource}}...</h3>
+        <div>
+          <div id="image">
+            <img style="max-width: 100%"
+                 v-if="imgurSource"
+                 v-bind:src="imgurSource">
+          </div>
+          <h3>Image above is [{{imgurSource}}]</h3>
         </div>
 
         <div v-if="status"
