@@ -93,19 +93,19 @@ const maybeBan = {}
 
 const userCommands = {
 
-  imadmin(ws) {
+  imadmin2(ws) {
     makeAdmin(ws)
   },
 
-  autotop(ws) {
+  autotop2(ws) {
     autotop(ws)
   },
 
-  say(ws, text) {
+  say2(ws, text) {
     sayToAll(text)
   },
 
-  upgrade(ws) {
+  upgrade2(ws) {
     process.exit()
   },
 
@@ -113,7 +113,7 @@ const userCommands = {
 
 server.commands = {
 
-  say(ws, text) {
+  say2(ws, text) {
     sayToAll(text)
   },
 
@@ -218,15 +218,15 @@ server.commands = {
     })
   },
 
-  imadmin(ws, bla) {
+  imadmin2(ws, bla) {
     makeAdmin(ws)
   },
 
-  autotop(ws, bla) {
+  autotop2(ws, bla) {
     autotop(ws)
   },
 
-  ban(ws, uuid) {
+  ban2(ws, uuid) {
     server.wss.clients.forEach((ws) => {
       if (ws.uuid === uuid) {
         banned.push(ws.ip)
