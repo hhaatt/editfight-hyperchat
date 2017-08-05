@@ -613,6 +613,10 @@
       }
     })
 
+    if (!localStorage.getItem('darkmode')) {
+      localStorage.setItem('darkmode', '1')
+    }
+
     if (localStorage.getItem('darkmode') === '1') {
       app.toggleDarkMode()
     }
