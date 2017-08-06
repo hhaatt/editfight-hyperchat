@@ -362,8 +362,6 @@
             <li><a href="#"
                  v-on:click.prevent="startChatting">Open your textbox.</a></li>
             <li>Everyone can see everyone typing live.</li>
-            <li>There's a <a target="_blank"
-                 href="https://youtu.be/M_XwzBMTJaM?t=104">cheat code</a>.</li>
           </ol>
 
           <!-- <p><span v-html="showExplanation ? '&minus;' : '&plus;'"></span> <a href="#"
@@ -376,15 +374,15 @@
             <li>People keep coming back.</li>
           </ul> -->
 
-          <p v-if="showTopStuff">&rarr; <a href="#"
+          <p v-if="showTopStuff"><a href="#"
                v-on:click.prevent="toggleDarkMode">{{darkMode ? "Light Mode" : "Dark Mode"}}.</a></p>
 
-          <p>&rarr; <a href="#"
-               v-on:click.prevent="showTopStuff = !showTopStuff">{{showTopStuff ? 'Abbreviated' : 'Verbose'}} mode.</a></p>
+          <!-- <p>&rarr; <a href="#"
+               v-on:click.prevent="showTopStuff = !showTopStuff">{{showTopStuff ? 'Abbreviated' : 'Verbose'}} mode.</a></p> -->
           <!-- <p>&rarr; <a target="_blank"
                href="https://github.com/sdegutis/editfight-hyperchat/issues">Send me feedback.</a></p> -->
           <!-- <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p> -->
-          <p>&lambda; <b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
+          <p><b>{{count - lurkers}}</b> (<b>{{((1 - (lurkers / count)) * 100).toFixed(0) + '%'}}</b>) active; <b>{{lurkers}}</b>            idle</p>
           <!--
 
           <form name="_xclick"
