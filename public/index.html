@@ -74,6 +74,11 @@
       max-width: 40em;
     }
 
+    .multi-column {
+      margin: 0 16px;
+      column-width: 30em;
+    }
+
     header {
       background-color: #ad4949;
     }
@@ -379,6 +384,8 @@
 
           <!-- <p>&rarr; <a href="#"
                v-on:click.prevent="showTopStuff = !showTopStuff">{{showTopStuff ? 'Abbreviated' : 'Verbose'}} mode.</a></p> -->
+          <p><a href="#"
+               v-on:click.prevent="multiColumnLayout = !multiColumnLayout">{{multiColumnLayout ? 'Single' : 'Multi'}} column layout.</a></p>
           <!-- <p>&rarr; <a target="_blank"
                href="https://github.com/sdegutis/editfight-hyperchat/issues">Send me feedback.</a></p> -->
           <!-- <p>&rarr; <a href="mailto:admin@editfight.com">I'm available for hire.</a></p> -->
@@ -417,7 +424,7 @@
     </div>
 
     <main>
-      <section class="column">
+      <section v-bind:class="{ 'column': !multiColumnLayout, 'multi-column': multiColumnLayout }">
 
         <!-- <div>
           <div id="image">
@@ -518,6 +525,7 @@
         powers: false,
         myCommand: '',
         imgurSource: null,
+        multiColumnLayout: false,
       },
 
       computed: {
